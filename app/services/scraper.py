@@ -3,7 +3,8 @@ from bs4 import BeautifulSoup
 import re
 import json
 
-from ..data.products import *
+from app.data.products import *
+
 
 products = [
     {'name': 'Mini Chopper', 'url': chopper_url},

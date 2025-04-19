@@ -1,0 +1,20 @@
+[project]
+name = "kitchinspy"
+version = "0.1.0"
+description = "KitchenAid price tracker."
+authors = [
+  { name="DesayoEm"}
+]
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+  "requests",
+  "beautifulsoup4",
+  "fastapi",
+  "uvicorn",
+  "matplotlib",
+  "schedule"
+]
+
+[tool.setuptools]
+packages = ["app"]

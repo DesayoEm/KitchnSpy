@@ -7,7 +7,7 @@ Project Workflow
 -  **smtplib** – native email notifications
 -  **Matplotlib** - for price trend visualization
 -  **schedule / background tasks** – optional for periodic scrapes
--  **SQLlite** – for logging data
+-  **SQlite** – for logging data
 
 ## Goal
 Track three specific KitchenAid products on the official site:
@@ -37,18 +37,14 @@ Plot price changes over time using Matplotlib:
 - [x] Implement BeautifulSoup + Requests scraper
 - [x] Set up proper headers to mimic browser behavior
 - [x] Implement error handling for network issues
-- [x] Create functions to extract price data
-- [ ] Create product-specific extraction logic
-- [ ] Extract all relevant product information (price, availability, etc.)
+- [x] Extract all relevant product information (price, availability, etc.)
 - [ ] Implement data validation and cleaning
 
 
 ### 3. Data Management
 - [ ] Design data model for product information
-- [ ] Implement SQLlite logging 
+- [ ] Implement SQlite logging 
 - [ ] Create data validation and cleaning functions
-- [ ] Setup initial product configuration data
-
 
 ### 4. API Development
 - [ ] Create FastAPI main application
@@ -76,24 +72,22 @@ Plot price changes over time using Matplotlib:
 - [ ] Setup error recovery mechanisms
 - [ ] Add logging for automated processes
 
-
-
 ### 9. Deployment & Documentation
 - [ ] Document API endpoints
 - [ ] Create usage instructions
 - [ ] Setup deployment configuration
 - [ ] Create backup and maintenance procedures
 
-## ✅ Weekly Milestones (Part-time Development Schedule)
+##  Weekly Milestones
 
 ### Week 1: Setup & Learning
-- [ ] Complete project structure and environment setup
-- [ ] Analyze KitchenAid UK website structure
+- [x] Complete project structure and environment setup
+- [x] Analyze KitchenAid UK website structure
 - [ ] Setup basic data logging structure
 
 ### Week 2-3: Implementation
-- [ ] Implement BeautifulSoup scraper for KitchenAid UK
-- [ ] Create price tracking for all three products
+- [x] Implement BeautifulSoup scraper for KitchenAid UK
+- [ ] Create price tracking for all four products
 - [ ] Implement FastAPI application and core endpoints
 - [ ] Setup notification system
 
