@@ -4,9 +4,9 @@ Project Workflow
 -  **Python**
 -  **BeautifulSoup + Requests** - for KitchenAid official UK site
 -  **FastAPI** – for API endpoints, manual triggers
--  **smtplib** – native email notifications
+-  **smtplib** –  email notifications
 -  **Matplotlib** - for price trend visualization
--  **schedule / background tasks** – optional for periodic scrapes
+-  **schedule / background tasks** –  for periodic scrapes
 -  **SQlite** – for logging data
 
 ## Goal
@@ -33,16 +33,16 @@ Plot price changes over time using Matplotlib:
 ### 2. Web Scraping Implementation
 - [x] Analyze KitchenAid UK website structure
 - [x] Inspect HTML elements for price information
-- [ ] Identify product availability indicators
+- [x] Identify product availability indicators
 - [x] Implement BeautifulSoup + Requests scraper
 - [x] Set up proper headers to mimic browser behavior
 - [x] Implement error handling for network issues
 - [x] Extract all relevant product information (price, availability, etc.)
-- [ ] Implement data validation and cleaning
+- [x] Implement data validation and cleaning
 
 
 ### 3. Data Management
-- [ ] Design data model for product information
+- [x] Design data model for product information
 - [ ] Implement SQlite logging 
 - [ ] Create data validation and cleaning functions
 
@@ -51,13 +51,15 @@ Plot price changes over time using Matplotlib:
 - [ ] Implement scraping endpoints
 - [ ] Create status and history endpoints
 - [ ] Add product management endpoints
-- [ ] Setup error handling and logging
+- [ ] Setup error handling 
+- [x] Setup logging
+
 
 ### 5. Notification System
 - [ ] Configure SMTP settings
 - [ ] Create email template for notifications
 - [ ] Implement notification sending logic
-- [ ] Add price threshold checking functionality
+
 
 ### 6. Visualization with Matplotlib
 - [ ] Create data processing functions for visualization
@@ -69,14 +71,12 @@ Plot price changes over time using Matplotlib:
 ### 7. Scheduling & Automation
 - [ ] Implement background task scheduler
 - [ ] Create periodic scraping functionality
-- [ ] Setup error recovery mechanisms
 - [ ] Add logging for automated processes
 
 ### 9. Deployment & Documentation
-- [ ] Document API endpoints
 - [ ] Create usage instructions
 - [ ] Setup deployment configuration
-- [ ] Create backup and maintenance procedures
+
 
 ##  Weekly Milestones
 

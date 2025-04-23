@@ -1,0 +1,15 @@
+
+if __name__ == "__main__":
+
+    scraper = Scraper(timeout=60, max_retries=3)
+    results = scraper.scrape_all_products(PRODUCTS)
+    pprint.pprint(results)
+
+    db = Database()
+
+    for item in results:
+        if item.status == "success":
+            product_dict = item.model_dump()
+            product_id = db.insert_or_update_product(product_dict)
+            if product_id:
+                db.log_price(product_id, product_dict)

@@ -3,8 +3,14 @@ evergreen_url ='https://www.kitchenaid.co.uk/mixers/medium/859711664810/mixer-de
 classic_url = 'https://www.kitchenaid.co.uk/mixers/medium/859700415030/mixer-tilt-head-4-3l-classic-5k45ss-white'
 bowl_url= 'https://www.kitchenaid.co.uk/mixing-bowls/859711694400/glass-mixing-bowl-4-7-l-5ksm5gb-transparent'
 
-# available -
-# scrape- status
-# date checked
+
+
+PRODUCTS = [
+    {'name': 'Evergreen Artisan', 'url': evergreen_url},
+    {'name': 'Classic White', 'url': classic_url},
+    {'name': 'Mini Chopper', 'url': chopper_url},
+    {'name': 'Glass Mixing bowl', 'url': bowl_url}
+]
+
 # prev price
 # change direction
