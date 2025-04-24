@@ -12,5 +12,3 @@ PRODUCTS = [
     {'name': 'Glass Mixing bowl', 'url': bowl_url}
 ]
 
-# prev price
-# change direction

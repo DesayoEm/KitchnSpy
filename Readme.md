@@ -2,9 +2,9 @@
 
 ## Okay, What's This about?
 
- I'm in the market for a KitchenAid tilt head stand mixer and mini food processor.
+I'm in the market for a KitchenAid tilt head stand mixer and mini food processor.
 
-KitchnSpy uses a sophisticated digital network (just kidding, it's just BeautifulSoup) to scrape the KitchenAid UK website and track the prices of these beauties:
+KitchnSpy uses a sophisticated digital network (just kidding, it's just BeautifulSoup) to scrape the KitchenAid website and track the prices of these beauties:
 
 **Mixer Design Series 4.7L Evergreen Artisan (5KSM180WS)** - You'll understand my obsession if you know how gorgeous it is
 
@@ -12,7 +12,7 @@ KitchnSpy uses a sophisticated digital network (just kidding, it's just Beautifu
 
 **Glass Mixing Bowl 4.7 L (5KSM5GB)** - Because its transparent duh ¯\_(ツ)_/¯
 
-**Mini Food Chopper 830ml White (5KFC3516)** - I have this in red, so I can't justify buying another one
+**Mini Food Chopper 830ml White (5KFC3516)** - I have this in red, so I can't justify buying another one.
 
 
 ## Features 

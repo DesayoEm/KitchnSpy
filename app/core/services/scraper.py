@@ -1,13 +1,14 @@
 from datetime import datetime
+import time
 import requests
 from bs4 import BeautifulSoup
-from typing import Dict, Any
+from typing import Dict, Any, List
 from requests.exceptions import RequestException
-from app.data.products import PRODUCTS
-from app.data.validation import ProductData
-from app.database.conn import Database
-from app.infrastructure.log_service import logger
-import pprint
+from app.core.data.validation import ProductData
+from app.core.services.exceptions import FailedRequestError, ParsingError
+from app.infra.log_service import logger
+
+
 
 
 class Scraper:
@@ -23,7 +24,8 @@ class Scraper:
         self.max_retries = max_retries
 
 
-    def make_request(self, url: str) -> requests.Response|None:
+
+    def make_request(self, url: str) -> requests.Response:
         """
         Make HTTP request with retries.
         Args:
@@ -34,16 +36,27 @@ class Scraper:
         for attempt in range(self.max_retries):
             try:
                 session = requests.Session()
-                response = session.get(url, headers=self.headers, timeout = self.timeout)
+                response = session.get(url, headers=self.headers, timeout=self.timeout)
+
                 if response.status_code == 200:
                     return response
-                logger.warning(f"Request failed with status code{response.status_code}"
-                               f"attempt {attempt + 1}/{self.max_retries}")
+
+                logger.warning(f"Attempt {attempt + 1}/{self.max_retries} failed with status {response.status_code}")
+
+                if attempt < self.max_retries - 1:
+                    sleep_time = 2 ** attempt
+                    logger.info(f"Waiting {sleep_time} seconds before retrying...")
+                    time.sleep(sleep_time)
+
 
             except RequestException as e:
-                logger.warning(f"Request error: {str(e)} (attempt {attempt + 1}/{self.max_retries})")
+                logger.warning(f"Request exception on attempt {attempt + 1}/{self.max_retries}: {e}")
 
-            return None
+        raise FailedRequestError(
+            detail=f"All {self.max_retries} attempts failed for URL: {url}",
+            attempt=self.max_retries,
+            tries=self.max_retries
+        )
 
 
     @staticmethod
@@ -112,9 +125,6 @@ class Scraper:
         logger.info(f"scraping URL: {url}")
         response=self.make_request(url)
 
-        if not response:
-            logger.error(f"Failed to retrieve page after {self.max_retries} attempts")
-            return {'status': 'error', 'message': 'Failed to retrieve page'}
         try:
             soup = BeautifulSoup(response.content, 'html.parser')
 
@@ -138,20 +148,14 @@ class Scraper:
             if missing_data:
                 logger.info(f"Missing data fields: {', '.join(missing_data)}")
 
-            validated = ProductData(**data)
-            return validated
+            data = ProductData.model_validate(data).model_dump()
+            return data
 
         except Exception as e:
-            logger.error(f"Error parsing page: {str(e)}")
-            return {
-                'product': product_name or 'Unknown',
-                'url':url,
-                'status': 'error',
-                'message': f"Error parsing page: {str(e)}"
-            }
+            raise ParsingError(url = url, error = str(e))
 
 
-    def scrape_all_products(self, product_list: list[Dict[str, str]]) -> list[Dict[str, Any]]:
+    def scrape_all_products(self, product_list: List[Dict[str, str]]) -> List[Dict[str, Any]]:
         """
         Scrape multiple products and return their data.
         Args:
@@ -159,21 +163,47 @@ class Scraper:
         Returns:
             List of product data dictionaries
         """
-        res = []
+        results = []
         for product in product_list:
             logger.info(f"Processing {product['name']}")
             try:
                 data = self.scrape_product(product['url'])
-                res.append(data)
-
-            except Exception as e:
-                logger.error(f"Failed to scrape {product['name']}: {str(e)}")
-                res.append({
+                results.append(data)
+            except FailedRequestError as e:
+                logger.error(f"Failed to request {product['name']}: {str(e)}")
+                results.append({
+                    'name': product['name'],
                     'product': product['name'],
+                    'url': product['url'],
                     'status': 'error',
-                    'message': str(e)
+                    'error_type': 'request_failed',
+                    'error_message': str(e),
+                    'date_checked': datetime.now().isoformat()
                 })
-        return res
+            except ParsingError as e:
+                logger.error(f"Failed to parse {product['name']}: {str(e)}")
+                results.append({
+                    'name': product['name'],
+                    'product': product['name'],
+                    'url': product['url'],
+                    'status': 'error',
+                    'error_type': 'parsing_failed',
+                    'error_message': str(e),
+                    'date_checked': datetime.now().isoformat()
+                })
+            except Exception as e:
+                logger.error(f"Unexpected error processing {product['name']}: {str(e)}")
+                results.append({
+                    'name': product['name'],
+                    'product': product['name'],
+                    'url': product['url'],
+                    'status': 'error',
+                    'error_type': 'unexpected',
+                    'error_message': str(e),
+                    'date_checked': datetime.now().isoformat()
+                })
+
+        return results
 
 
 
