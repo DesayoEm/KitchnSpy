@@ -1,11 +1,11 @@
-from datetime import datetime
+from datetime import timezone, datetime
 import time
 import requests
 from bs4 import BeautifulSoup
 from typing import Dict, Any, List
 from requests.exceptions import RequestException
-from app.core.data.validation import ProductData
-from app.core.services.exceptions import FailedRequestError, ParsingError
+from app.core.database.validation import ProductData
+from app.core.exceptions import FailedRequestError, ParsingError
 from app.infra.log_service import logger
 
 
@@ -95,9 +95,9 @@ class Scraper:
         page_text = soup.get_text().lower()
 
         if available_btn or 'add to cart' in page_text:
-            return 1
+            return True
         elif unavailable_btn or 'e-mail me when available' in page_text:
-            return 0
+            return False
 
         return None
 
@@ -138,8 +138,8 @@ class Scraper:
                 'url': url,
                 'price': price,
                 'img_url': image_url,
-                'availability': availability,
-                'date_checked': datetime.now().isoformat(),
+                'is_available': availability,
+                'date_checked': datetime.now(timezone.utc),
                 'status': 'success'
             }
             missing_data = [field for field, value in data.items()
@@ -169,6 +169,7 @@ class Scraper:
             try:
                 data = self.scrape_product(product['url'])
                 results.append(data)
+
             except FailedRequestError as e:
                 logger.error(f"Failed to request {product['name']}: {str(e)}")
                 results.append({
@@ -178,8 +179,10 @@ class Scraper:
                     'status': 'error',
                     'error_type': 'request_failed',
                     'error_message': str(e),
-                    'date_checked': datetime.now().isoformat()
+                    'date_checked': datetime.now(timezone.utc),
                 })
+                raise FailedRequestError()
+
             except ParsingError as e:
                 logger.error(f"Failed to parse {product['name']}: {str(e)}")
                 results.append({
@@ -189,8 +192,10 @@ class Scraper:
                     'status': 'error',
                     'error_type': 'parsing_failed',
                     'error_message': str(e),
-                    'date_checked': datetime.now().isoformat()
+                    'date_checked': datetime.now(timezone.utc),
                 })
+                raise ParsingError(url=product['url'], error=str(e))
+
             except Exception as e:
                 logger.error(f"Unexpected error processing {product['name']}: {str(e)}")
                 results.append({
@@ -200,7 +205,7 @@ class Scraper:
                     'status': 'error',
                     'error_type': 'unexpected',
                     'error_message': str(e),
-                    'date_checked': datetime.now().isoformat()
+                    'date_checked': datetime.now(timezone.utc)
                 })
 
         return results

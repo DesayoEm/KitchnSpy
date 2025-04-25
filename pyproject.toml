@@ -1,5 +1,5 @@
 [project]
-name = "kitchinspy"
+name = "KitchnSpy"
 version = "0.1.0"
 description = "KitchenAid price tracker."
 authors = [

@@ -2,7 +2,7 @@ import time
 from fastapi import Request, status, HTTPException
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-from app.core.services.exceptions import *
+from app.core.exceptions import *
 from app.infra.log_service import logger
 
 

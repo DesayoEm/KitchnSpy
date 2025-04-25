@@ -6,7 +6,7 @@ class ProductData(BaseModel):
     name: str|None
     url: str|None
     price: str|None
-    availability: int|None
+    is_available: bool|None
     img_url: str|None
     date_checked: datetime
     status: str
