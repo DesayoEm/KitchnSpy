@@ -42,3 +42,9 @@ class URIConnectionError(KitchnSpyExceptions):
         self.display = "An unexpected error occurred"
         self.log = f"Missing or invalid DB_URI"
 
+
+class EmailFailedError(KitchnSpyExceptions):
+    def __init__(self, detail: str):
+        super().__init__()
+        self.display = "An unexpected error occurred"
+        self.log = f"Email failed to send. DETAIL: {detail}"

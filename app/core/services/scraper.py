@@ -181,7 +181,6 @@ class Scraper:
                     'error_message': str(e),
                     'date_checked': datetime.now(timezone.utc),
                 })
-                raise FailedRequestError()
 
             except ParsingError as e:
                 logger.error(f"Failed to parse {product['name']}: {str(e)}")
