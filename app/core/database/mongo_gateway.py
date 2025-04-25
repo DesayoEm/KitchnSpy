@@ -17,6 +17,7 @@ class MongoGateway:
         db = client['kitchnspy']
         self. products = db["products"]
         self.price_log = db["price_log"]
+        self.subscribers = db["subscribers"]
 
     def insert_product(self, data: dict):
         return self.products.insert_one(data)
@@ -33,8 +34,17 @@ class MongoGateway:
     def replace_product(self, filter: dict, new_document: dict):
         return self.products.replace_one(filter, new_document)
 
+    def delete_product(self, url: str):
+        return self.products.delete_one({'url': url})
+
     def log_price(self, data):
         return self.price_log.insert_one(data)
+
+    def insert_subscriber(self, data: dict):
+        return self.subscribers.insert_one(data)
+
+    def delete_subscriber(self, email: str):
+        return self.subscribers.delete_one({'email_address': email})
 
 
 

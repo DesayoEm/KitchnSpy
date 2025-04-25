@@ -5,6 +5,141 @@ class NotificationService:
     def __init__(self):
         self.email_service = EmailService()
 
+
+    def send_subscription_confirmation(
+            self,
+            to_email: str,
+            name: str,
+            product_name: str,
+            unsubscribe_link: str
+    ) -> bool:
+        """Send a welcome/confirmation email after user subscribes."""
+
+        subject = f"You're in! We'll watch {product_name} for you"
+
+        html_body = f"""
+        <html>
+        <head>
+            <style>
+                body {{ font-family: Arial, sans-serif; background-color: #ffffff; color: #283618; line-height: 1.6; }}
+                .container {{ max-width: 600px; margin: auto; padding: 20px; }}
+                .header {{ background-color: #606c38; color: #fefae0; padding: 20px; border-radius: 12px; text-align: center; }}
+                .content {{ background-color: #fefae0; padding: 20px; border-radius: 12px; margin-top: 20px; }}
+                .footer {{ font-size: 12px; color: #666; text-align: center; margin-top: 30px; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h2>Nice one, {name}!</h2>
+                </div>
+                <div class="content">
+                    <p>You're all set — I'm keeping an eye on <strong>{product_name}</strong> for you.</p>
+                    <p>Whenever the price changes, we’ll let you know. Until then, just sit back and relax. </p>
+                    <p style="font-size: 0.9em;"><a href="{unsubscribe_link}">Unsubscribe</a> if you ever change your mind.</p>
+                </div>
+                <div class="footer">
+                     Just updates when things actually change.
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+
+        text_body = f"""
+        Hey {name},
+
+        You're in! I'll keep an eye on {product_name} for you.
+
+        Whenever the price changes, you'll be the first to know.
+        If you ever want to unsubscribe, use this link: {unsubscribe_link}
+
+        — Desayo
+        """
+
+        return self.email_service.send_email(to_email, subject, html_body, text_body)
+
+    def send_unsubscribed_confirmation(
+            self,
+            to_email: str,
+            name: str,
+            product_name: str,
+            subscription_link: str
+    ) -> bool:
+        """Send a confirmation email after a user unsubscribes."""
+
+        subject = f"You’ve unsubscribed from {product_name} alerts"
+
+        html_body = f"""
+        <html>
+        <head>
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    background-color: #ffffff;
+                    color: #283618;
+                    line-height: 1.6;
+                }}
+                .container {{
+                    max-width: 600px;
+                    margin: auto;
+                    padding: 20px;
+                }}
+                .header {{
+                    background-color: #bc6c25;
+                    color: #fefae0;
+                    padding: 20px;
+                    text-align: center;
+                    border-radius: 12px;
+                }}
+                .content {{
+                    background-color: #fefae0;
+                    padding: 20px;
+                    border-radius: 12px;
+                    margin-top: 20px;
+                    color: #283618;
+                }}
+                .footer {{
+                    font-size: 12px;
+                    color: #666;
+                    text-align: center;
+                    margin-top: 30px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h2>You're all set, {name}</h2>
+                </div>
+                <div class="content">
+                    <p>You’ve been unsubscribed from alerts for <strong>{product_name}</strong>.</p>
+                    <p>No more notifications from us about this item — but you’re always welcome back if you change your mind.</p>
+                    
+                </div>
+                <div class="footer">
+                    This was a one-time unsubscribe confirmation. No further emails will be sent.
+                    <br>
+                    f"{subscription_link}"
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+
+        text_body = f"""
+        Hi {name},
+
+        You've been unsubscribed from price alerts for '{product_name}'.
+
+        No more notifications from us — but you can re-subscribe if you change your mind.
+        
+        f"{subscription_link}"
+
+        """
+
+        return self.email_service.send_email(to_email, subject, html_body, text_body)
+
     def send_price_change_notification(
             self,
             to_email: str,

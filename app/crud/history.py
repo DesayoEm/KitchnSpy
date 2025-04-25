@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from app.core.database.database import MongoGateway
+from app.core.database.mongo_gateway import MongoGateway
 from app.core.exceptions import PriceLoggingError, NotFoundError
 from app.crud.scrape import ScraperCrud
 

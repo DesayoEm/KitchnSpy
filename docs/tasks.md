@@ -32,9 +32,9 @@
 
 
 ### 5. Notification System
-- [ ] Configure SMTP settings
-- [ ] Create email template for notifications
-- [ ] Implement notification sending logic
+- [x] Configure SMTP settings
+- [x] Create email template for notifications
+- [x] Implement notification sending logic
 
 
 ### 6. Visualization with Matplotlib
@@ -64,7 +64,7 @@
 - [x] Implement BeautifulSoup scraper for KitchenAid UK
 - [x] Create price tracking for products
 - [ ] Implement FastAPI application and core endpoints
-- [ ] Setup notification system
+- [x] Setup notification system
 
 ### Week 4: Visualization & Polish
 - [ ] Implement Matplotlib visualizations
