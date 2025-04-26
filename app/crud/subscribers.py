@@ -4,7 +4,7 @@ from app.crud.products import ProductCrud
 from app.core.utils import Utils
 
 
-class SubscriptionCrud:
+class SubscriberCrud:
     def __init__(self):
         """
         Initialize SubscriptionCrud with database access, product management, and notification services.

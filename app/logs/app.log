@@ -463,3 +463,10 @@ ValueError: [TypeError("'ObjectId' object is not iterable"), TypeError('vars() a
 2025-04-26 05:12:34,261 - KitchnSpy - INFO - Application started
 2025-04-26 05:13:17,315 - KitchnSpy - INFO - Application started
 2025-04-26 05:14:37,081 - KitchnSpy - INFO - Application started
+2025-04-26 05:23:01,074 - KitchnSpy - INFO - Application started
+2025-04-26 06:22:45,105 - KitchnSpy - INFO - Request started | GET /docs
+2025-04-26 06:22:45,107 - KitchnSpy - INFO - Request completed | Status: 200 | Time: 0.001s
+2025-04-26 06:22:45,443 - KitchnSpy - INFO - Request started | GET /openapi.json
+2025-04-26 06:22:45,445 - KitchnSpy - INFO - Request completed | Status: 200 | Time: 0.002s
+2025-04-26 06:22:52,307 - KitchnSpy - INFO - Request started | GET /api/v1/products/
+2025-04-26 06:22:52,330 - KitchnSpy - INFO - Request completed | Status: 200 | Time: 0.022s

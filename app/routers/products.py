@@ -2,12 +2,12 @@ from fastapi import APIRouter
 
 from app.crud.prices import PricesCrud
 from app.crud.products import ProductCrud
-from app.crud.subscription import SubscriptionCrud
+from app.crud.subscribers import SubscriberCrud
 
 router = APIRouter()
 products_crud = ProductCrud()
 prices_crud = PricesCrud()
-subscription_crud = SubscriptionCrud()
+subscription_crud = SubscriberCrud()
 
 
 @router.post("/")
@@ -16,7 +16,7 @@ async def add_product(url: str):
 
 @router.post("/")
 async def get_all_products():
-    return products_crud.find_products()
+    return products_crud.find_all_products()
 
 
 @router.get("/{product_id}")
@@ -55,7 +55,7 @@ async def add_product(url: str):
 
 @router.post("/")
 async def get_all_prices():
-    return prices_crud.get_all_prices()
+    return prices_crud.find_all_prices()
 
 @router.delete("/prices")
 async def delete_price(price_id):
