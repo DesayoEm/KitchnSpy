@@ -48,3 +48,9 @@ class EmailFailedError(KitchnSpyExceptions):
         super().__init__()
         self.display = "An unexpected error occurred"
         self.log = f"Email failed to send. DETAIL: {detail}"
+
+class InvalidIdError(KitchnSpyExceptions):
+    def __init__(self, detail: str):
+        super().__init__()
+        self.display = "An unexpected error occurred"
+        self.log = f"Invalid id: {detail}"

@@ -1,118 +1,28 @@
-2025-04-25 03:38:25,858 - KitchnSpy - INFO - Processing Evergreen Artisan
-2025-04-25 03:38:25,877 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859711664810/mixer-design-series-4-7l-evergreen-artisan-5ksm180ws-evergreen
-2025-04-25 03:38:26,437 - KitchnSpy - INFO - Processing Classic White
-2025-04-25 03:38:26,437 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859700415030/mixer-tilt-head-4-3l-classic-5k45ss-white
-2025-04-25 03:38:26,648 - KitchnSpy - INFO - Processing Mini Chopper
-2025-04-25 03:38:26,649 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/food-processors/859711696080/mini-food-chopper-830ml-5kfc3516-white
-2025-04-25 03:38:26,802 - KitchnSpy - INFO - Processing Glass Mixing bowl
-2025-04-25 03:38:26,806 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixing-bowls/859711694400/glass-mixing-bowl-4-7-l-5ksm5gb-transparent
-2025-04-25 03:41:28,019 - KitchnSpy - INFO - Processing Evergreen Artisan
-2025-04-25 03:41:28,019 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859711664810/mixer-design-series-4-7l-evergreen-artisan-5ksm180ws-evergreen
-2025-04-25 03:41:28,223 - KitchnSpy - ERROR - Failed to parse Evergreen Artisan: 
-2025-04-25 03:41:28,223 - KitchnSpy - INFO - Processing Classic White
-2025-04-25 03:41:28,223 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859700415030/mixer-tilt-head-4-3l-classic-5k45ss-white
-2025-04-25 03:41:28,399 - KitchnSpy - ERROR - Failed to parse Classic White: 
-2025-04-25 03:41:28,399 - KitchnSpy - INFO - Processing Mini Chopper
-2025-04-25 03:41:28,399 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/food-processors/859711696080/mini-food-chopper-830ml-5kfc3516-white
-2025-04-25 03:41:28,555 - KitchnSpy - ERROR - Failed to parse Mini Chopper: 
-2025-04-25 03:41:28,556 - KitchnSpy - INFO - Processing Glass Mixing bowl
-2025-04-25 03:41:28,556 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixing-bowls/859711694400/glass-mixing-bowl-4-7-l-5ksm5gb-transparent
-2025-04-25 03:41:28,709 - KitchnSpy - ERROR - Failed to parse Glass Mixing bowl: 
-2025-04-25 03:42:16,396 - KitchnSpy - INFO - Processing Evergreen Artisan
-2025-04-25 03:42:16,396 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859711664810/mixer-design-series-4-7l-evergreen-artisan-5ksm180ws-evergreen
-2025-04-25 03:42:16,562 - KitchnSpy - ERROR - Failed to parse Evergreen Artisan: 
-2025-04-25 03:42:16,564 - KitchnSpy - INFO - Processing Classic White
-2025-04-25 03:42:16,564 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859700415030/mixer-tilt-head-4-3l-classic-5k45ss-white
-2025-04-25 03:42:16,744 - KitchnSpy - ERROR - Failed to parse Classic White: 
-2025-04-25 03:42:16,744 - KitchnSpy - INFO - Processing Mini Chopper
-2025-04-25 03:42:16,744 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/food-processors/859711696080/mini-food-chopper-830ml-5kfc3516-white
-2025-04-25 03:42:16,908 - KitchnSpy - ERROR - Failed to parse Mini Chopper: 
-2025-04-25 03:42:16,908 - KitchnSpy - INFO - Processing Glass Mixing bowl
-2025-04-25 03:42:16,908 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixing-bowls/859711694400/glass-mixing-bowl-4-7-l-5ksm5gb-transparent
-2025-04-25 03:42:17,063 - KitchnSpy - ERROR - Failed to parse Glass Mixing bowl: 
-2025-04-25 03:44:43,638 - KitchnSpy - INFO - Processing Evergreen Artisan
-2025-04-25 03:44:43,638 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859711664810/mixer-design-series-4-7l-evergreen-artisan-5ksm180ws-evergreen
-2025-04-25 03:44:43,874 - KitchnSpy - ERROR - Failed to parse Evergreen Artisan: 
-2025-04-25 03:44:43,875 - KitchnSpy - INFO - Processing Classic White
-2025-04-25 03:44:43,875 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859700415030/mixer-tilt-head-4-3l-classic-5k45ss-white
-2025-04-25 03:44:44,317 - KitchnSpy - ERROR - Failed to parse Classic White: 
-2025-04-25 03:44:44,318 - KitchnSpy - INFO - Processing Mini Chopper
-2025-04-25 03:44:44,318 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/food-processors/859711696080/mini-food-chopper-830ml-5kfc3516-white
-2025-04-25 03:44:44,492 - KitchnSpy - ERROR - Failed to parse Mini Chopper: 
-2025-04-25 03:44:44,492 - KitchnSpy - INFO - Processing Glass Mixing bowl
-2025-04-25 03:44:44,492 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixing-bowls/859711694400/glass-mixing-bowl-4-7-l-5ksm5gb-transparent
-2025-04-25 03:44:44,683 - KitchnSpy - ERROR - Failed to parse Glass Mixing bowl: 
-2025-04-25 03:48:18,251 - KitchnSpy - INFO - Processing Evergreen Artisan
-2025-04-25 03:48:18,251 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859711664810/mixer-design-series-4-7l-evergreen-artisan-5ksm180ws-evergreen
-2025-04-25 03:48:18,468 - KitchnSpy - ERROR - Failed to parse Evergreen Artisan: 
-2025-04-25 03:48:18,469 - KitchnSpy - INFO - Processing Classic White
-2025-04-25 03:48:18,469 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859700415030/mixer-tilt-head-4-3l-classic-5k45ss-white
-2025-04-25 03:48:18,662 - KitchnSpy - ERROR - Failed to parse Classic White: 
-2025-04-25 03:48:18,663 - KitchnSpy - INFO - Processing Mini Chopper
-2025-04-25 03:48:18,663 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/food-processors/859711696080/mini-food-chopper-830ml-5kfc3516-white
-2025-04-25 03:48:18,821 - KitchnSpy - ERROR - Failed to parse Mini Chopper: 
-2025-04-25 03:48:18,822 - KitchnSpy - INFO - Processing Glass Mixing bowl
-2025-04-25 03:48:18,822 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixing-bowls/859711694400/glass-mixing-bowl-4-7-l-5ksm5gb-transparent
-2025-04-25 03:48:19,012 - KitchnSpy - ERROR - Failed to parse Glass Mixing bowl: 
-2025-04-25 03:50:58,285 - KitchnSpy - INFO - Processing Evergreen Artisan
-2025-04-25 03:50:58,285 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859711664810/mixer-design-series-4-7l-evergreen-artisan-5ksm180ws-evergreen
-2025-04-25 03:50:58,482 - KitchnSpy - ERROR - Failed to parse Evergreen Artisan: 
-2025-04-25 03:50:58,482 - KitchnSpy - INFO - Processing Classic White
-2025-04-25 03:50:58,483 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859700415030/mixer-tilt-head-4-3l-classic-5k45ss-white
-2025-04-25 03:50:58,679 - KitchnSpy - ERROR - Failed to parse Classic White: 
-2025-04-25 03:50:58,680 - KitchnSpy - INFO - Processing Mini Chopper
-2025-04-25 03:50:58,680 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/food-processors/859711696080/mini-food-chopper-830ml-5kfc3516-white
-2025-04-25 03:50:58,893 - KitchnSpy - ERROR - Failed to parse Mini Chopper: 
-2025-04-25 03:50:58,894 - KitchnSpy - INFO - Processing Glass Mixing bowl
-2025-04-25 03:50:58,894 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixing-bowls/859711694400/glass-mixing-bowl-4-7-l-5ksm5gb-transparent
-2025-04-25 03:50:59,048 - KitchnSpy - ERROR - Failed to parse Glass Mixing bowl: 
-2025-04-25 03:54:28,819 - KitchnSpy - INFO - Processing Evergreen Artisan
-2025-04-25 03:54:28,819 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859711664810/mixer-design-series-4-7l-evergreen-artisan-5ksm180ws-evergreen
-2025-04-25 03:54:29,006 - KitchnSpy - ERROR - Failed to parse Evergreen Artisan: 
-2025-04-25 03:54:29,006 - KitchnSpy - INFO - Processing Classic White
-2025-04-25 03:54:29,006 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859700415030/mixer-tilt-head-4-3l-classic-5k45ss-white
-2025-04-25 03:54:29,241 - KitchnSpy - ERROR - Failed to parse Classic White: 
-2025-04-25 03:54:29,242 - KitchnSpy - INFO - Processing Mini Chopper
-2025-04-25 03:54:29,242 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/food-processors/859711696080/mini-food-chopper-830ml-5kfc3516-white
-2025-04-25 03:54:29,391 - KitchnSpy - ERROR - Failed to parse Mini Chopper: 
-2025-04-25 03:54:29,392 - KitchnSpy - INFO - Processing Glass Mixing bowl
-2025-04-25 03:54:29,392 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixing-bowls/859711694400/glass-mixing-bowl-4-7-l-5ksm5gb-transparent
-2025-04-25 03:54:29,580 - KitchnSpy - ERROR - Failed to parse Glass Mixing bowl: 
-2025-04-25 03:56:56,842 - KitchnSpy - INFO - Processing Evergreen Artisan
-2025-04-25 03:56:56,844 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859711664810/mixer-design-series-4-7l-evergreen-artisan-5ksm180ws-evergreen
-2025-04-25 03:56:57,056 - KitchnSpy - ERROR - Failed to parse Evergreen Artisan: 
-2025-04-25 03:56:57,056 - KitchnSpy - INFO - Processing Classic White
-2025-04-25 03:56:57,056 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859700415030/mixer-tilt-head-4-3l-classic-5k45ss-white
-2025-04-25 03:56:57,227 - KitchnSpy - ERROR - Failed to parse Classic White: 
-2025-04-25 03:56:57,227 - KitchnSpy - INFO - Processing Mini Chopper
-2025-04-25 03:56:57,227 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/food-processors/859711696080/mini-food-chopper-830ml-5kfc3516-white
-2025-04-25 03:56:57,404 - KitchnSpy - ERROR - Failed to parse Mini Chopper: 
-2025-04-25 03:56:57,404 - KitchnSpy - INFO - Processing Glass Mixing bowl
-2025-04-25 03:56:57,404 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixing-bowls/859711694400/glass-mixing-bowl-4-7-l-5ksm5gb-transparent
-2025-04-25 03:56:57,544 - KitchnSpy - ERROR - Failed to parse Glass Mixing bowl: 
-2025-04-25 03:59:59,521 - KitchnSpy - INFO - Processing Evergreen Artisan
-2025-04-25 03:59:59,521 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859711664810/mixer-design-series-4-7l-evergreen-artisan-5ksm180ws-evergreen
-2025-04-25 04:02:29,385 - KitchnSpy - INFO - Processing Evergreen Artisan
-2025-04-25 04:02:29,388 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859711664810/mixer-design-series-4-7l-evergreen-artisan-5ksm180ws-evergreen
-2025-04-25 04:04:37,022 - KitchnSpy - INFO - Processing Evergreen Artisan
-2025-04-25 04:04:37,023 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859711664810/mixer-design-series-4-7l-evergreen-artisan-5ksm180ws-evergreen
-2025-04-25 04:06:22,010 - KitchnSpy - INFO - Processing Evergreen Artisan
-2025-04-25 04:06:22,011 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859711664810/mixer-design-series-4-7l-evergreen-artisan-5ksm180ws-evergreen
-2025-04-25 04:08:39,639 - KitchnSpy - INFO - Processing Evergreen Artisan
-2025-04-25 04:08:39,639 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859711664810/mixer-design-series-4-7l-evergreen-artisan-5ksm180ws-evergreen
-2025-04-25 04:09:26,810 - KitchnSpy - INFO - Processing Evergreen Artisan
-2025-04-25 04:09:26,810 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859711664810/mixer-design-series-4-7l-evergreen-artisan-5ksm180ws-evergreen
-2025-04-25 04:09:27,006 - KitchnSpy - INFO - Processing Classic White
-2025-04-25 04:09:27,006 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859700415030/mixer-tilt-head-4-3l-classic-5k45ss-white
-2025-04-25 04:09:27,215 - KitchnSpy - INFO - Processing Mini Chopper
-2025-04-25 04:09:27,215 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/food-processors/859711696080/mini-food-chopper-830ml-5kfc3516-white
-2025-04-25 04:09:27,384 - KitchnSpy - INFO - Processing Glass Mixing bowl
-2025-04-25 04:09:27,384 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixing-bowls/859711694400/glass-mixing-bowl-4-7-l-5ksm5gb-transparent
-2025-04-25 04:10:46,643 - KitchnSpy - INFO - Processing Evergreen Artisan
-2025-04-25 04:10:46,646 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859711664810/mixer-design-series-4-7l-evergreen-artisan-5ksm180ws-evergreen
-2025-04-25 04:10:47,187 - KitchnSpy - INFO - Processing Classic White
-2025-04-25 04:10:47,187 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixers/medium/859700415030/mixer-tilt-head-4-3l-classic-5k45ss-white
-2025-04-25 04:10:47,484 - KitchnSpy - INFO - Processing Mini Chopper
-2025-04-25 04:10:47,484 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/food-processors/859711696080/mini-food-chopper-830ml-5kfc3516-white
-2025-04-25 04:10:47,684 - KitchnSpy - INFO - Processing Glass Mixing bowl
-2025-04-25 04:10:47,685 - KitchnSpy - INFO - scraping URL: https://www.kitchenaid.co.uk/mixing-bowls/859711694400/glass-mixing-bowl-4-7-l-5ksm5gb-transparent
+2025-04-26 02:28:34,440 - KitchnSpy - INFO - Application started
+2025-04-26 02:30:52,112 - KitchnSpy - INFO - Application started
+2025-04-26 03:34:27,535 - KitchnSpy - INFO - Application started
+2025-04-26 03:43:36,525 - KitchnSpy - INFO - Application started
+2025-04-26 03:51:24,227 - KitchnSpy - INFO - Application started
+2025-04-26 03:53:49,080 - KitchnSpy - INFO - Application started
+2025-04-26 03:55:24,906 - KitchnSpy - INFO - Application started
+2025-04-26 03:55:42,257 - KitchnSpy - INFO - Application started
+2025-04-26 03:57:59,861 - KitchnSpy - INFO - Application started
+2025-04-26 03:59:35,604 - KitchnSpy - INFO - Application started
+2025-04-26 04:00:43,063 - KitchnSpy - INFO - Application started
+2025-04-26 04:02:31,970 - KitchnSpy - INFO - Application started
+2025-04-26 04:02:43,611 - KitchnSpy - INFO - Application started
+2025-04-26 04:03:40,657 - KitchnSpy - INFO - Application started
+2025-04-26 04:04:27,980 - KitchnSpy - INFO - Application started
+2025-04-26 04:06:07,937 - KitchnSpy - INFO - Application started
+2025-04-26 04:10:45,700 - KitchnSpy - INFO - Application started
+2025-04-26 04:11:33,933 - KitchnSpy - INFO - Application started
+2025-04-26 04:12:03,521 - KitchnSpy - INFO - Application started
+2025-04-26 04:16:47,622 - KitchnSpy - INFO - Application started
+2025-04-26 04:23:25,197 - KitchnSpy - INFO - Application started
+2025-04-26 04:24:36,256 - KitchnSpy - INFO - Application started
+2025-04-26 04:25:07,254 - KitchnSpy - INFO - Application started
+2025-04-26 04:29:08,804 - KitchnSpy - INFO - Application started
+2025-04-26 04:29:20,977 - KitchnSpy - INFO - Application started
+2025-04-26 04:29:48,339 - KitchnSpy - INFO - Application started
+2025-04-26 04:31:13,732 - KitchnSpy - INFO - Application started
+2025-04-26 04:33:03,923 - KitchnSpy - INFO - Application started

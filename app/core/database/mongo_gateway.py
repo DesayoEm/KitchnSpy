@@ -1,9 +1,12 @@
 import os
+import pymongo
 from dotenv import load_dotenv
 from datetime import date
 from pymongo import MongoClient
+from bson import ObjectId
+from bson.errors import InvalidId
+from app.core.exceptions import URIConnectionError, InvalidIdError
 
-from app.core.exceptions import URIConnectionError
 load_dotenv()
 
 
@@ -19,27 +22,68 @@ class MongoGateway:
         self.price_log = db["price_log"]
         self.subscribers = db["subscribers"]
 
+    #Products
     def insert_product(self, data: dict):
         return self.products.insert_one(data)
 
-    def insert_products(self, data: dict):
+    def insert_products(self, data: list[dict]):
         return self.products.insert_many(data)
 
-    def find_product(self, url: str):
-        return self.products.find_one({'url': url})
+    def find_product(self, product_id: str):
+        try:
+            obj_id = ObjectId(product_id)
+        except InvalidId as e:
+            return InvalidIdError(detail = str(e))
 
-    def update_product(self, filter: dict, updated_data: dict):
-        return self.products.update_one(filter, {"$set": updated_data}, upsert=True)
+        return self.products.find_one({"_id": obj_id})
 
-    def replace_product(self, filter: dict, new_document: dict):
-        return self.products.replace_one(filter, new_document)
+    def find_all_products(self):
+        return (
+            self.products.find({}, {"_id": 0})
+            .sort('product_name', pymongo.ASCENDING)
+            .limit(10)
+        )
 
-    def delete_product(self, url: str):
-        return self.products.delete_one({'url': url})
+    def update_product(self, product_id: str, updated_data: dict):
+        try:
+            obj_id = ObjectId(product_id)
+        except InvalidId as e:
+            return InvalidIdError(detail = str(e))
 
-    def log_price(self, data):
+        return self.products.update_one(
+            {"_id":obj_id}, {"$set": updated_data}, upsert=True
+        )
+
+    def replace_product(self, product_id: str, new_document: dict):
+        try:
+            obj_id = ObjectId(product_id)
+        except InvalidId as e:
+            return InvalidIdError(detail = str(e))
+
+        return self.products.replace_one(
+        {"_id":obj_id}, new_document
+        )
+
+
+    def delete_product(self, product_id: str):
+        try:
+            obj_id = ObjectId(product_id)
+        except InvalidId as e:
+            return InvalidIdError(detail = str(e))
+
+        return self.products.delete_one({"_id":obj_id})
+
+
+
+    #Price logs
+    def insert_price_log(self, data):
         return self.price_log.insert_one(data)
 
+    def find_price_log(self, filter: dict):
+        pass
+
+
+    #Subscribers
     def insert_subscriber(self, data: dict):
         return self.subscribers.insert_one(data)
 

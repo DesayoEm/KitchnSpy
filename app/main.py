@@ -11,7 +11,8 @@ app = FastAPI(
 
 app.add_middleware(ExceptionMiddleware)
 
-@app.get("/")
+
+@app.get("/kitchnspy")
 async def root():
     return {"message": "Welcome to KitchnSpy!"}
 
