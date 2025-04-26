@@ -26,3 +26,440 @@
 2025-04-26 04:29:48,339 - KitchnSpy - INFO - Application started
 2025-04-26 04:31:13,732 - KitchnSpy - INFO - Application started
 2025-04-26 04:33:03,923 - KitchnSpy - INFO - Application started
+2025-04-26 04:34:26,459 - KitchnSpy - INFO - Application started
+2025-04-26 04:39:05,155 - KitchnSpy - INFO - Application started
+2025-04-26 04:42:21,068 - KitchnSpy - INFO - Application started
+2025-04-26 04:43:27,119 - KitchnSpy - INFO - Application started
+2025-04-26 04:43:27,194 - KitchnSpy - INFO - Request started | GET /docs
+2025-04-26 04:43:27,195 - KitchnSpy - INFO - Request completed | Status: 200 | Time: 0.000s
+2025-04-26 04:43:27,496 - KitchnSpy - INFO - Request started | GET /openapi.json
+2025-04-26 04:43:27,498 - KitchnSpy - INFO - Request completed | Status: 200 | Time: 0.002s
+2025-04-26 04:55:58,555 - KitchnSpy - INFO - Application started
+2025-04-26 04:56:40,759 - KitchnSpy - INFO - Request started | GET /
+2025-04-26 04:56:40,760 - KitchnSpy - INFO - Request completed | Status: 404 | Time: 0.001s
+2025-04-26 04:56:40,939 - KitchnSpy - INFO - Request started | GET /favicon.ico
+2025-04-26 04:56:40,940 - KitchnSpy - INFO - Request completed | Status: 404 | Time: 0.001s
+2025-04-26 04:56:46,264 - KitchnSpy - INFO - Request started | GET /docs
+2025-04-26 04:56:46,270 - KitchnSpy - INFO - Request completed | Status: 200 | Time: 0.003s
+2025-04-26 04:56:46,640 - KitchnSpy - INFO - Request started | GET /openapi.json
+2025-04-26 04:56:46,647 - KitchnSpy - INFO - Request completed | Status: 200 | Time: 0.007s
+2025-04-26 04:56:58,635 - KitchnSpy - INFO - Request started | GET /api/v1/products/
+2025-04-26 04:56:58,713 - KitchnSpy - ERROR - Exception | [TypeError("'builtin_function_or_method' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+Traceback (most recent call last):
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 324, in jsonable_encoder
+    data = dict(obj)
+           ^^^^^^^^^
+TypeError: 'builtin_function_or_method' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 329, in jsonable_encoder
+    data = vars(obj)
+           ^^^^^^^^^
+TypeError: vars() argument must have __dict__ attribute
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\dell\Desktop\Engineering\Projects\KitchnSpy\app\infra\middleware.py", line 23, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\base.py", line 163, in call_next
+    raise app_exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\base.py", line 149, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 735, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py", line 327, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py", line 201, in serialize_response
+    return jsonable_encoder(response_content)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 333, in jsonable_encoder
+    return jsonable_encoder(
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 289, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+                    ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 333, in jsonable_encoder
+    return jsonable_encoder(
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 289, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+                    ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 303, in jsonable_encoder
+    jsonable_encoder(
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 333, in jsonable_encoder
+    return jsonable_encoder(
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 333, in jsonable_encoder
+    return jsonable_encoder(
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 289, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+                    ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 332, in jsonable_encoder
+    raise ValueError(errors) from e
+ValueError: [TypeError("'builtin_function_or_method' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+2025-04-26 04:56:58,844 - KitchnSpy - ERROR - Unhandled exception | [TypeError("'builtin_function_or_method' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+Traceback (most recent call last):
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 324, in jsonable_encoder
+    data = dict(obj)
+           ^^^^^^^^^
+TypeError: 'builtin_function_or_method' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 329, in jsonable_encoder
+    data = vars(obj)
+           ^^^^^^^^^
+TypeError: vars() argument must have __dict__ attribute
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\dell\Desktop\Engineering\Projects\KitchnSpy\app\infra\middleware.py", line 23, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\base.py", line 163, in call_next
+    raise app_exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\base.py", line 149, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 735, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py", line 327, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py", line 201, in serialize_response
+    return jsonable_encoder(response_content)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 333, in jsonable_encoder
+    return jsonable_encoder(
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 289, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+                    ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 333, in jsonable_encoder
+    return jsonable_encoder(
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 289, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+                    ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 303, in jsonable_encoder
+    jsonable_encoder(
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 333, in jsonable_encoder
+    return jsonable_encoder(
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 333, in jsonable_encoder
+    return jsonable_encoder(
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 289, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+                    ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 332, in jsonable_encoder
+    raise ValueError(errors) from e
+ValueError: [TypeError("'builtin_function_or_method' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+2025-04-26 04:57:51,788 - KitchnSpy - INFO - Request started | GET /api/v1/products/680afd372f8cf00cdcb286ed
+2025-04-26 04:57:51,804 - KitchnSpy - ERROR - Exception | [TypeError("'ObjectId' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+Traceback (most recent call last):
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 324, in jsonable_encoder
+    data = dict(obj)
+           ^^^^^^^^^
+TypeError: 'ObjectId' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 329, in jsonable_encoder
+    data = vars(obj)
+           ^^^^^^^^^
+TypeError: vars() argument must have __dict__ attribute
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\dell\Desktop\Engineering\Projects\KitchnSpy\app\infra\middleware.py", line 23, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\base.py", line 163, in call_next
+    raise app_exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\base.py", line 149, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 735, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py", line 327, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py", line 201, in serialize_response
+    return jsonable_encoder(response_content)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 289, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+                    ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 332, in jsonable_encoder
+    raise ValueError(errors) from e
+ValueError: [TypeError("'ObjectId' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+2025-04-26 04:57:51,814 - KitchnSpy - ERROR - Unhandled exception | [TypeError("'ObjectId' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+Traceback (most recent call last):
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 324, in jsonable_encoder
+    data = dict(obj)
+           ^^^^^^^^^
+TypeError: 'ObjectId' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 329, in jsonable_encoder
+    data = vars(obj)
+           ^^^^^^^^^
+TypeError: vars() argument must have __dict__ attribute
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\dell\Desktop\Engineering\Projects\KitchnSpy\app\infra\middleware.py", line 23, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\base.py", line 163, in call_next
+    raise app_exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\base.py", line 149, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 735, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py", line 327, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py", line 201, in serialize_response
+    return jsonable_encoder(response_content)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 289, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+                    ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 332, in jsonable_encoder
+    raise ValueError(errors) from e
+ValueError: [TypeError("'ObjectId' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+2025-04-26 04:58:01,867 - KitchnSpy - INFO - Request started | GET /docs
+2025-04-26 04:58:01,869 - KitchnSpy - INFO - Request completed | Status: 200 | Time: 0.002s
+2025-04-26 04:58:02,075 - KitchnSpy - INFO - Request started | GET /openapi.json
+2025-04-26 04:58:02,077 - KitchnSpy - INFO - Request completed | Status: 200 | Time: 0.002s
+2025-04-26 04:58:16,837 - KitchnSpy - INFO - Request started | GET /docs
+2025-04-26 04:58:16,838 - KitchnSpy - INFO - Request completed | Status: 200 | Time: 0.001s
+2025-04-26 04:58:16,916 - KitchnSpy - INFO - Request started | GET /openapi.json
+2025-04-26 04:58:16,918 - KitchnSpy - INFO - Request completed | Status: 200 | Time: 0.000s
+2025-04-26 04:59:41,623 - KitchnSpy - INFO - Application started
+2025-04-26 04:59:48,126 - KitchnSpy - INFO - Request started | GET /docs
+2025-04-26 04:59:48,128 - KitchnSpy - INFO - Request completed | Status: 200 | Time: 0.002s
+2025-04-26 04:59:48,333 - KitchnSpy - INFO - Request started | GET /openapi.json
+2025-04-26 04:59:48,337 - KitchnSpy - INFO - Request completed | Status: 200 | Time: 0.004s
+2025-04-26 05:00:05,467 - KitchnSpy - INFO - Request started | GET /api/v1/products/680afd372f8cf00cdcb286ed
+2025-04-26 05:00:05,486 - KitchnSpy - ERROR - Exception | [TypeError("'ObjectId' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+Traceback (most recent call last):
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 324, in jsonable_encoder
+    data = dict(obj)
+           ^^^^^^^^^
+TypeError: 'ObjectId' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 329, in jsonable_encoder
+    data = vars(obj)
+           ^^^^^^^^^
+TypeError: vars() argument must have __dict__ attribute
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\dell\Desktop\Engineering\Projects\KitchnSpy\app\infra\middleware.py", line 23, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\base.py", line 163, in call_next
+    raise app_exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\base.py", line 149, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 735, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py", line 327, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py", line 201, in serialize_response
+    return jsonable_encoder(response_content)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 289, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+                    ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 332, in jsonable_encoder
+    raise ValueError(errors) from e
+ValueError: [TypeError("'ObjectId' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+2025-04-26 05:00:05,504 - KitchnSpy - ERROR - Unhandled exception | [TypeError("'ObjectId' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+Traceback (most recent call last):
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 324, in jsonable_encoder
+    data = dict(obj)
+           ^^^^^^^^^
+TypeError: 'ObjectId' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 329, in jsonable_encoder
+    data = vars(obj)
+           ^^^^^^^^^
+TypeError: vars() argument must have __dict__ attribute
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\dell\Desktop\Engineering\Projects\KitchnSpy\app\infra\middleware.py", line 23, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\base.py", line 163, in call_next
+    raise app_exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\base.py", line 149, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 735, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py", line 327, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py", line 201, in serialize_response
+    return jsonable_encoder(response_content)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 289, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+                    ^^^^^^^^^^^^^^^^^
+  File "C:\Users\dell\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\encoders.py", line 332, in jsonable_encoder
+    raise ValueError(errors) from e
+ValueError: [TypeError("'ObjectId' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+2025-04-26 05:02:37,362 - KitchnSpy - INFO - Application started
+2025-04-26 05:03:07,331 - KitchnSpy - INFO - Application started
+2025-04-26 05:04:40,521 - KitchnSpy - INFO - Application started
+2025-04-26 05:07:52,289 - KitchnSpy - INFO - Application started
+2025-04-26 05:08:54,172 - KitchnSpy - INFO - Application started
+2025-04-26 05:09:04,795 - KitchnSpy - INFO - Request started | GET /docs
+2025-04-26 05:09:04,798 - KitchnSpy - INFO - Request completed | Status: 200 | Time: 0.001s
+2025-04-26 05:09:04,985 - KitchnSpy - INFO - Request started | GET /openapi.json
+2025-04-26 05:09:04,992 - KitchnSpy - INFO - Request completed | Status: 200 | Time: 0.007s
+2025-04-26 05:09:22,300 - KitchnSpy - INFO - Request started | GET /api/v1/products/680afd372f8cf00cdcb286ed
+2025-04-26 05:09:22,320 - KitchnSpy - INFO - Request completed | Status: 200 | Time: 0.020s
+2025-04-26 05:10:15,220 - KitchnSpy - INFO - Request started | GET /api/v1/products/
+2025-04-26 05:10:15,225 - KitchnSpy - INFO - Request completed | Status: 200 | Time: 0.005s
+2025-04-26 05:12:34,261 - KitchnSpy - INFO - Application started
+2025-04-26 05:13:17,315 - KitchnSpy - INFO - Application started
+2025-04-26 05:14:37,081 - KitchnSpy - INFO - Application started
