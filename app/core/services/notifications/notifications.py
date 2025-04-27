@@ -253,3 +253,95 @@ class NotificationService:
         """
 
         return self.email_service.send_email(to_email, subject, html_body, text_body)
+
+
+    def send_product_removed_notification(
+            self,
+            to_email: str,
+            name: str,
+            product_name: str
+    ) -> bool:
+        """
+        Send a notification email when a product is no longer being tracked.
+
+        Args:
+            to_email (str): Subscriber's email address.
+            name (str): Subscriber's name.
+            product_name (str): Name of the product that is being removed.
+
+        Returns:
+            bool: Whether the email was sent successfully.
+        """
+        subject = f"Update: We're no longer tracking {product_name}"
+
+        html_body = f"""
+        <html>
+        <head>
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    background-color: #ffffff;
+                    color: #283618;
+                    line-height: 1.6;
+                    margin: 0;
+                    padding: 0;
+                }}
+                .container {{
+                    max-width: 600px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }}
+                .header {{
+                    background-color: #bc6c25;
+                    color: #fefae0;
+                    padding: 20px;
+                    text-align: center;
+                    border-radius: 12px;
+                }}
+                .content {{
+                    background-color: #fefae0;
+                    padding: 20px;
+                    border-radius: 12px;
+                    margin-top: 20px;
+                    color: #283618;
+                }}
+                .footer {{
+                    font-size: 12px;
+                    color: #666;
+                    text-align: center;
+                    margin-top: 30px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h2>Hello {name},</h2>
+                </div>
+                <div class="content">
+                    <p>We wanted to let you know that we are no longer tracking <strong>{product_name}</strong> on KitchnSpy.</p>
+                    <p>Thank you for subscribing and trusting us to keep you updated. We hope you'll continue exploring more great deals with us!</p>
+                    <p>If you're interested, you can always subscribe to track other products on our site.</p>
+                </div>
+                <div class="footer">
+                    Thank you for being part of the KitchnSpy community.
+                    <br>— Desayo
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+
+        text_body = f"""
+        Hello {name},
+
+        We wanted to let you know that we are no longer tracking '{product_name}' on KitchnSpy.
+
+        Thank you for subscribing and trusting us to keep you updated.
+        We hope you'll continue exploring more great deals with us!
+
+        — Desayo
+        """
+
+        return self.email_service.send_email(to_email, subject, html_body, text_body)
+

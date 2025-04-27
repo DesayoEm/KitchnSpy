@@ -51,6 +51,7 @@ class PricesCrud:
             }
 
             self.db.insert_price_log(data)
+            #if price change, notify all subs
 
         except Exception as e:
             raise PriceLoggingError(product_id=str(product_id), error=str(e))
@@ -65,6 +66,7 @@ class PricesCrud:
 
         for product in products:
             self.log_price(product['_id'])
+
 
     def get_price_history(self, product_id: str) -> list[dict]:
         """
