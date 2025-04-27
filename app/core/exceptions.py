@@ -49,8 +49,15 @@ class EmailFailedError(KitchnSpyExceptions):
         self.display = "An unexpected error occurred"
         self.log = f"Email failed to send. DETAIL: {detail}"
 
+
 class InvalidIdError(KitchnSpyExceptions):
     def __init__(self, detail: str):
         super().__init__()
         self.display = "An unexpected error occurred"
         self.log = f"Invalid id: {detail}"
+
+class NotSubscribedError(KitchnSpyExceptions):
+    def __init__(self, email_address: str):
+        super().__init__()
+        self.display = "You're not subscribed to receive notifications for this item"
+        self.log = f"Non subscriber attempted to unsubscribe {email_address}"

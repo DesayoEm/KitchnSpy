@@ -1,46 +1,52 @@
 from app.core.database.mongo_gateway import MongoGateway
-from app.core.services.notifications.notifications import NotificationService
+from app.core.exceptions import NotSubscribedError
 from app.crud.products import ProductCrud
+from app.core.services.notifications.notifications import NotificationService
 from app.core.utils import Utils
+from app.core.database.validation.subscription import SubscriberData
 
 
 class SubscriberCrud:
     def __init__(self):
         """
-        Initialize SubscriptionCrud with database access, product management, and notification services.
+        Initialize SubscriberCrud with database access, product management, and notification services.
         """
         self.db = MongoGateway()
         self.products = ProductCrud()
         self.notifier = NotificationService()
         self.util = Utils()
 
-    def add_subscriber(self, data: dict) -> None:
+    def add_subscriber(self, product_id: str, data: SubscriberData) -> None:
         """
-        Add a new subscriber to the database and send them a subscription confirmation email.
+        Add a new subscriber to the database and send a subscription confirmation email.
         Args:
-            data (dict): A dictionary containing subscriber information (email_address, name, product_name).
+            product_id (str): ID of the product to subscribe to.
+            data (SubscriberData): Subscriber input data.
         """
-        self.db.insert_subscriber(data)
-        self.send_subscription_email(data)
+        subscriber_info = data.model_dump()
 
-    def send_subscription_email(self, subscriber_data: dict) -> bool:
+        product = self.products.find_product(product_id)
+
+        subscriber_info["product_id"] = product_id
+        subscriber_info["product_name"] = product["product_name"]
+        subscriber_info["product_url"] = product["url"]
+
+        self.db.insert_subscriber(subscriber_info)
+        self.send_subscription_email(subscriber_info)
+
+
+    def send_subscription_email(self, subscriber_data: dict) -> None:
         """
         Send a subscription confirmation email to a new subscriber.
         Args:
-            subscriber_data (dict): A dictionary containing subscriber details (name, email_address, product_name).
-
-        Returns:
-            bool: Whether the subscription confirmation email was sent successfully.
+            subscriber_data (dict): Full subscriber information.
         """
-        name = subscriber_data.get("name", "there")
-        product_name = subscriber_data.get("product_name", "a product")
+        unsubscribe_link = f"https://kitchnspy.com/subscriptions/{subscriber_data['product_id']}/unsubscribe?email={subscriber_data['email_address']}"
 
-        unsubscribe_link = f"https://kitchnspy.com/unsubscribe?email={subscriber_data['email_address']}"
-
-        return self.notifier.send_subscription_confirmation(
+        self.notifier.send_subscription_confirmation(
             to_email=subscriber_data["email_address"],
-            name=name,
-            product_name=product_name,
+            name=subscriber_data["name"],
+            product_name=subscriber_data["product_name"],
             unsubscribe_link=unsubscribe_link
         )
 
@@ -57,14 +63,20 @@ class SubscriberCrud:
             self.util.convert_objectid_to_str(subscriber) for subscriber in subscribers
         ]
 
-    def remove_subscriber(self, subscriber_data: dict) -> bool:
+
+    def remove_subscriber(self, product_id: str, email_address: str) -> bool:
         """
-        Remove a subscriber and send them an unsubscription confirmation email.
+        Remove a subscriber and send them an un-subscription confirmation email.
         Args:
-            subscriber_data (dict): A dictionary containing subscriber details (name, email_address, product_name).
+            product_id (str): ID of the product to unsubscribe from.
+            email_address (str): Subscriber's email address.
         Returns:
-            bool: Whether the unsubscription confirmation email was sent successfully.
+            bool: Whether the un-subscription confirmation email was sent successfully.
         """
+        subscriber_data = self.db.find_subscriber(product_id, email_address)
+        if not subscriber_data:
+            raise NotSubscribedError(email_address = email_address)
+
         subscription_link = f"https://kitchnspy.com/product/subscribe?email={subscriber_data['email_address']}"
 
         self.db.delete_subscriber(subscriber_data['email_address'])

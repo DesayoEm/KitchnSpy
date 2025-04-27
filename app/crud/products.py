@@ -33,15 +33,16 @@ class ProductCrud:
         validated_product = ProductData.model_validate(scraped_product).model_dump()
         return self.db.insert_product(validated_product)
 
-    def add_products(self, products: ProductsCreateBatch) -> list[dict]:
+
+    def add_products(self, data: ProductsCreateBatch) -> list[dict]:
         """
         Scrape multiple products from a list and insert them into the database.
         Args:
-            products (ProductsCreateBatch): Pydantic batch input containing multiple products.
+            data(ProductsCreateBatch): Pydantic batch input containing multiple products.
         Returns:
             list[dict]: List of inserted product metadata.
         """
-
+        products = data.products
         product_dicts = [product.model_dump() for product in products]
         scraped_products = self.scraper.scrape_products(product_dicts)
 
