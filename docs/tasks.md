@@ -24,9 +24,9 @@
 
 ### 4. API Development
 - [x] Create FastAPI main application
-- [ ] Create scraping endpoints
-- [ ] Create status and history endpoints
-- [ ] Add product management endpoints
+- [x] Create scraping endpoints
+- [x] Create status and history endpoints
+- [x] Add product management endpoints
 - [x] Setup error handling 
 - [x] Setup logging
 
@@ -48,6 +48,7 @@
 - [ ] Create periodic scraping functionality
 - [ ] Add logging for automated processes
 
+
 ### 9. Deployment & Documentation
 - [ ] Create usage instructions
 - [ ] Setup deployment configuration
@@ -63,7 +64,7 @@
 ### Week 2-3: Implementation
 - [x] Implement BeautifulSoup scraper for KitchenAid UK
 - [x] Create price tracking for products
-- [ ] Implement FastAPI application and core endpoints
+- [x] Implement FastAPI application and core endpoints
 - [x] Setup notification system
 
 ### Week 4: Visualization & Polish

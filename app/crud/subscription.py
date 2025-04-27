@@ -1,12 +1,12 @@
 from app.core.database.mongo_gateway import MongoGateway
 from app.core.exceptions import NotSubscribedError
-from app.crud.products import ProductCrud
 from app.core.services.notifications.notifications import NotificationService
 from app.core.utils import Utils
+from app.crud.products import ProductCrud
 from app.core.database.validation.subscription import SubscriberData
 
 
-class SubscriberCrud:
+class SubscriptionCrud:
     def __init__(self):
         """
         Initialize SubscriberCrud with database access, product management, and notification services.
@@ -15,6 +15,15 @@ class SubscriberCrud:
         self.products = ProductCrud()
         self.notifier = NotificationService()
         self.util = Utils()
+
+    def serialize_document(self, document: dict | None) -> dict | None:
+        """Convert ObjectId to str in a single document."""
+        return self.util.convert_objectid_to_str(document)
+
+    def serialize_documents(self, documents: list[dict]) -> list[dict]:
+        """Convert ObjectId to str in a list of documents."""
+        return [self.util.convert_objectid_to_str(doc) for doc in documents if doc]
+
 
     def add_subscriber(self, product_id: str, data: SubscriberData) -> None:
         """
@@ -59,9 +68,7 @@ class SubscriberCrud:
             list[dict]: A list of subscriber documents.
         """
         subscribers = list(self.db.find_subscribers(product_id))
-        return [
-            self.util.convert_objectid_to_str(subscriber) for subscriber in subscribers
-        ]
+        return self.serialize_documents(subscribers)
 
 
     def remove_subscriber(self, product_id: str, email_address: str) -> bool:

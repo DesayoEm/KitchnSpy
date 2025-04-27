@@ -1,9 +1,9 @@
 from fastapi import APIRouter
-from app.crud.subscribers import SubscriberCrud
+from app.crud.subscription import SubscriptionCrud
 from app.core.database.validation.subscription import SubscriberData
 
 router = APIRouter()
-subscription_crud = SubscriberCrud()
+subscription_crud = SubscriptionCrud()
 
 @router.post("/{product_id}/subscribe")
 async def subscribe_to_notifications(product_id: str, data: SubscriberData):

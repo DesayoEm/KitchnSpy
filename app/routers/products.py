@@ -27,4 +27,5 @@ async def update_product(product_id: str):
 
 @router.delete("/{product_id}")
 async def delete_product(product_id: str):
-    return products_crud.delete_product(product_id)
+    products_crud.delete_product(product_id)
+    return {"message": "Product deleted successfully"}
