@@ -31,21 +31,13 @@ class MongoGateway:
         self.subscribers = db["subscribers"]
         self.util = Utils()
 
-    def _serialize_document(self, document: dict | None) -> dict | None:
-        """Convert ObjectId to str in a single document."""
-        return self.util.convert_objectid_to_str(document)
-
-    def _serialize_documents(self, documents: list[dict]) -> list[dict]:
-        """Convert ObjectId to str in a list of documents."""
-        return [self.util.convert_objectid_to_str(doc) for doc in documents if doc]
-
-
     # Products
     def insert_product(self, data: dict) -> InsertOneResult:
         return self.products.insert_one(data)
 
     def insert_products(self, data: list[dict]) -> InsertManyResult:
         return self.products.insert_many(data)
+
 
     def find_product(self, product_id: str) -> dict | None:
         """Find a single product by its ID."""
@@ -54,17 +46,14 @@ class MongoGateway:
         except InvalidId as e:
             raise InvalidIdError(detail=str(e))
 
-        document = self.products.find_one({"_id": obj_id})
-        return self._serialize_document(document)
+        return self.products.find_one({"_id": obj_id})
 
 
     def find_all_products(self) -> list[dict]:
-        """Retrieve all products, sorted by product name (limited to 10)."""
-        documents = list(
+        """Retrieve all products, sorted by product name"""
+        return  list(
             self.products.find({}).sort('product_name', pymongo.ASCENDING).limit(10)
         )
-        return self._serialize_documents(documents)
-
 
     def update_product(self, product_id: str, updated_data: dict) -> UpdateResult:
         try:
@@ -86,6 +75,7 @@ class MongoGateway:
 
         return self.products.replace_one({"_id": obj_id}, new_document)
 
+
     def delete_product(self, product_id: str) -> DeleteResult:
         try:
             obj_id = ObjectId(product_id)
@@ -99,6 +89,7 @@ class MongoGateway:
     def insert_price_log(self, data: dict) -> InsertOneResult:
         return self.price_logs.insert_one(data)
 
+
     def find_price_history(self, product_id: str) -> list[dict]:
         try:
             obj_id = ObjectId(product_id)
@@ -109,14 +100,29 @@ class MongoGateway:
             self.price_logs.find({"product_id": obj_id})
             .sort("date_checked", pymongo.ASCENDING)
         )
-        return self._serialize_documents(documents)
+        return documents
+
+    def yield_product_price_history(self, product_id: str):
+        """
+        Yield serialized price history documents for a product, one by one.
+        """
+        try:
+            obj_id = ObjectId(product_id)
+        except InvalidId as e:
+            raise InvalidIdError(detail=str(e))
+
+        cursor = self.price_logs.find({"product_id": obj_id}).sort("date_checked", pymongo.ASCENDING)
+
+        for document in cursor:
+            yield self.util.convert_objectid_to_str(document)
+
 
     def find_all_price_logs(self) -> list[dict]:
         documents = list(
             self.price_logs.find({})
             .sort("date_checked", pymongo.ASCENDING)
         )
-        return self._serialize_documents(documents)
+        return documents
 
     def delete_price(self, price_id: str) -> DeleteResult:
         try:
@@ -138,8 +144,21 @@ class MongoGateway:
         except InvalidId as e:
             raise InvalidIdError(detail=str(e))
 
-        documents = list(self.subscribers.find({"product_id": obj_id}))
-        return self._serialize_documents(documents)
+        return list(self.subscribers.find({"product_id": obj_id}))
+
+
+    def yield_product_subscribers(self, product_id: str):
+        """Yield serialized subscribers for a product, one by one."""
+        try:
+            obj_id = ObjectId(product_id)
+        except InvalidId as e:
+            raise InvalidIdError(detail=str(e))
+
+        cursor = self.subscribers.find({"product_id": obj_id}).sort("name", pymongo.ASCENDING)
+
+        for document in cursor:
+            yield self.util.convert_objectid_to_str(document)
+
 
     def find_subscriber(self, email_address: str, product_id: str) -> dict | None:
         try:

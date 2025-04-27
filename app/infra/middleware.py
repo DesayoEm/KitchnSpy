@@ -12,6 +12,8 @@ class ExceptionMiddleware(BaseHTTPMiddleware):
         ParsingError: status.HTTP_500_INTERNAL_SERVER_ERROR,
         PriceLoggingError: status.HTTP_500_INTERNAL_SERVER_ERROR,
         FailedRequestError: status.HTTP_500_INTERNAL_SERVER_ERROR,
+        URLNotFoundError: status.HTTP_500_INTERNAL_SERVER_ERROR,
+        IDNotFoundError: status.HTTP_500_INTERNAL_SERVER_ERROR
 
     }
 
@@ -60,7 +62,7 @@ class ExceptionMiddleware(BaseHTTPMiddleware):
     def create_json_response(e, status_code):
         return JSONResponse(
             status_code=status_code,
-            content={"detail": e.user_message}
+            content={"detail": e.display}
         )
 
 

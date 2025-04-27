@@ -58,7 +58,7 @@ class Scraper:
 
     @staticmethod
     def extract_product_name(soup: BeautifulSoup) -> str|None:
-        """Extract product name using multiple possible selectors."""
+        """Extract product."""
         product_name_tag = soup.find('h1', class_='c-dZSbvE')
         if product_name_tag and product_name_tag.text.strip():
             return product_name_tag.text.strip()
@@ -68,7 +68,7 @@ class Scraper:
 
     @staticmethod
     def extract_price(soup: BeautifulSoup) -> str|None:
-        """Extract price using multiple possible selectors."""
+        """Extract price."""
         price_tag = soup.find('div', class_='c-bULnVn c-bULnVn-icWEoxs-css')
         if price_tag and price_tag.text.strip():
             return price_tag.text.strip()
@@ -101,7 +101,7 @@ class Scraper:
 
     @staticmethod
     def extract_image_url(soup: BeautifulSoup) -> str|None:
-        """Extract product image URL using multiple possible approaches."""
+        """Extract product image URL"""
         img_container = soup.find('div', class_='c-dvzBLj')
         if img_container:
             img_tag = img_container.find('img')
@@ -131,8 +131,8 @@ class Scraper:
             image_url = self.extract_image_url(soup)
             availability = self.check_availability(soup)
             data = {
-                'name': name,
-                'product': product_name,
+                'product': name,
+                'product_name': product_name,
                 'url': url,
                 'price': price,
                 'img_url': image_url,

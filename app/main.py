@@ -6,7 +6,7 @@ env_path = current_dir / ".env"
 load_dotenv(dotenv_path=env_path)
 from app.infra.log_service import logger
 from app.infra.middleware import ExceptionMiddleware
-from app.routers import products, prices,  subscription
+from app.routers import products, prices, subscription
 
 
 version = "v1"
@@ -22,7 +22,7 @@ app.include_router(products.router, prefix=f"/api/{version}/products",
                    tags=["Products"])
 app.include_router(prices.router, prefix=f"/api/{version}/prices",
                    tags=["Prices"])
-app.include_router(subscribers.router, prefix=f"/api/{version}/subscribers",
+app.include_router(subscription.router, prefix=f"/api/{version}/subscribers",
                    tags=["Subscribers"])
 
 

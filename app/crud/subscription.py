@@ -20,18 +20,14 @@ class SubscriptionCrud:
         """Convert ObjectId to str in a single document."""
         return self.util.convert_objectid_to_str(document)
 
+
     def serialize_documents(self, documents: list[dict]) -> list[dict]:
         """Convert ObjectId to str in a list of documents."""
         return [self.util.convert_objectid_to_str(doc) for doc in documents if doc]
 
 
     def add_subscriber(self, product_id: str, data: SubscriberData) -> None:
-        """
-        Add a new subscriber to the database and send a subscription confirmation email.
-        Args:
-            product_id (str): ID of the product to subscribe to.
-            data (SubscriberData): Subscriber input data.
-        """
+        """Add a new subscriber to the database and send a subscription confirmation email."""
         subscriber_info = data.model_dump()
 
         product = self.products.find_product(product_id)
@@ -45,11 +41,7 @@ class SubscriptionCrud:
 
 
     def send_subscription_email(self, subscriber_data: dict) -> None:
-        """
-        Send a subscription confirmation email to a new subscriber.
-        Args:
-            subscriber_data (dict): Full subscriber information.
-        """
+        """Send a subscription confirmation email to a new subscriber."""
         unsubscribe_link = f"https://kitchnspy.com/subscriptions/{subscriber_data['product_id']}/unsubscribe?email={subscriber_data['email_address']}"
 
         self.notifier.send_subscription_confirmation(
@@ -59,27 +51,20 @@ class SubscriptionCrud:
             unsubscribe_link=unsubscribe_link
         )
 
+
     def find_all_subscribers(self, product_id: str) -> list[dict]:
-        """
-        Find all subscribers associated with a given product.
-        Args:
-            product_id (str): The MongoDB ObjectId of the product.
-        Returns:
-            list[dict]: A list of subscriber documents.
-        """
+        """Find all subscribers associated with a given product."""
         subscribers = list(self.db.find_subscribers(product_id))
         return self.serialize_documents(subscribers)
 
 
+    def yield_product_subscribers(self, product_id: str) -> list[dict]:
+        """Find all subscribers associated with a given product."""
+        return self.db.yield_product_subscribers(product_id)
+
+
     def remove_subscriber(self, product_id: str, email_address: str) -> bool:
-        """
-        Remove a subscriber and send them an un-subscription confirmation email.
-        Args:
-            product_id (str): ID of the product to unsubscribe from.
-            email_address (str): Subscriber's email address.
-        Returns:
-            bool: Whether the un-subscription confirmation email was sent successfully.
-        """
+        """Remove a subscriber and send them an un-subscription confirmation email."""
         subscriber_data = self.db.find_subscriber(product_id, email_address)
         if not subscriber_data:
             raise NotSubscribedError(email_address = email_address)

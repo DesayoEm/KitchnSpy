@@ -1,5 +1,6 @@
 from app.core.database.mongo_gateway import MongoGateway
 from app.core.database.validation.product import ProductCreate, ProductData, ProductsCreateBatch
+from app.core.exceptions import IDNotFoundError
 from app.core.services.notifications.notifications import NotificationService
 from app.core.services.scraper import Scraper
 from app.core.utils import Utils
@@ -25,13 +26,7 @@ class ProductCrud:
 
 
     def add_product(self, data: ProductCreate) -> dict:
-        """
-        Scrape a product from the given URL and insert it into the database.
-        Args:
-            data (ProductCreate): Pydantic class containing name and URL of the product to scrape.
-        Returns:
-            dict: Metadata about the inserted product.
-        """
+        """Scrape a product from the given name and URL and insert it into the database."""
         scraped_product = self.scraper.scrape_product({
             "name": data.name,
             "url": data.url
@@ -39,17 +34,11 @@ class ProductCrud:
 
         validated_product = ProductData.model_validate(scraped_product).model_dump()
         self.db.insert_product(validated_product)
-        return validated_product
+        return self.serialize_document(validated_product)
 
 
     def add_products(self, data: ProductsCreateBatch) -> list[dict]:
-        """
-        Scrape multiple products from a list and insert them into the database.
-        Args:
-            data(ProductsCreateBatch): Pydantic batch input containing multiple products.
-        Returns:
-            list[dict]: List of inserted product metadata.
-        """
+        """Scrape multiple products from a list and insert them into the database."""
         products = data.products
         product_dicts = [product.model_dump() for product in products]
         scraped_products = self.scraper.scrape_products(product_dicts)
@@ -60,41 +49,28 @@ class ProductCrud:
         ]
 
         self.db.insert_products(validated_products)
-        return validated_products
+        return self.serialize_documents(validated_products)
 
 
     def find_product(self, product_id: str) -> dict | None:
-        """
-        Find a single product in the database by its ID.
-        Args:
-            product_id (str): The MongoDB ObjectId of the product.
-        Returns:
-            dict | None: The product document or None if not found.
-        """
+        """Find a single product in the database by its ID."""
         product = self.db.find_product(product_id)
         return self.serialize_document(product)
 
 
     def find_all_products(self) -> list[dict]:
-        """
-        Find all products in the database, sorted by product name.
-        Returns:
-            list[dict]: A list of product documents (limited to 10).
-        """
+        """Find all products in the database, sorted by product name."""
         products = self.db.find_all_products()
         return self.serialize_documents(products)
 
 
     def update_product(self, product_id: str) -> dict:
-        """
-        Update an existing product by re-scraping its data.
-        Args:
-            product_id (str): The MongoDB ObjectId of the product to update.
-        Returns:
-            dict: Result of the update operation.
-        """
+        """Update an existing product by re-scraping its data."""
 
         existing = self.db.find_product(product_id)
+        if not existing:
+            raise IDNotFoundError(identifier=product_id)
+
         updated_scrape = self.scraper.scrape_product({
             "name": existing["name"],
             "url": existing["url"]
@@ -102,7 +78,7 @@ class ProductCrud:
 
         validated_update = ProductData.model_validate(updated_scrape).model_dump()
 
-        required_fields = ["name", "url", "price", "availability", "img_url"]
+        required_fields = ["product", "url", "price", "availability", "img_url"]
         if any(validated_update.get(field) is None for field in required_fields):
             updated_data = self.db.update_product(product_id, validated_update)
             return self.serialize_document(updated_data)
@@ -112,26 +88,20 @@ class ProductCrud:
 
 
     def delete_product(self, product_id: str) -> None:
-        """
-        Delete a product from the database, including its price history and subscriptions.
-        Args:
-            product_id (str): The MongoDB ObjectId of the product to delete.
-        Returns:
-        dict: The result of the product delete operation.
-        """
+        """Delete a product from the database, including its price history and subscriptions."""
         from app.crud.subscription import SubscriptionCrud
-        subscription = SubscriptionCrud()
+        subscription_crud = SubscriptionCrud()
 
         from app.crud.prices import PricesCrud
         price_crud = PricesCrud()
 
-        price_history = price_crud.get_price_history(product_id)
+        price_history = price_crud.yield_product_price_history(product_id)
         for price in price_history:
             price_id = price["_id"]
             price_crud.delete_price(price_id)
 
-        subscriber_list = subscription.find_all_subscribers(product_id)
-        for subscriber in subscriber_list:
+        subscribers = subscription_crud.yield_product_subscribers(product_id)
+        for subscriber in subscribers:
             email = subscriber['email_address']
             name = subscriber['name']
             product_name = subscriber['product_name']
@@ -141,6 +111,6 @@ class ProductCrud:
             )
 
             subscriber_id = subscriber["_id"]
-            subscription.delete_subscriber(subscriber_id)
+            subscription_crud.delete_subscriber(subscriber_id)
 
         self.db.delete_product(product_id)

@@ -46,14 +46,20 @@ class ProductsCreateBatch(BaseModel):
         }
     )
 
-class ProductData(BaseModel):
+class ProductData(ProductCreate):
     """Schema for representing product price data over time."""
+    name: str | None
+    product_name: str | None
+    img_url: str | None
+    is_available: bool | None
     date_checked: datetime
     price: str | None
+    status: str
+
 
     @field_validator('price')
     def validate_price_format(cls, value: str) -> str:
-        """Validate that the price starts with '£' and format it consistently."""
+        """Validate that the price starts with '£' and format it."""
 
         if not value.strip().startswith("£"):
             raise ValueError("Price must start with '£'")

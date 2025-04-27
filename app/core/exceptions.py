@@ -2,18 +2,23 @@ class KitchnSpyExceptions(Exception):
     """ Base class for all KitchnSpy exceptions"""
 
 
+class IDNotFoundError(KitchnSpyExceptions):
+    def __init__(self, identifier: str):
+        super().__init__()
+        self.display = "Entity not found"
+        self.log = f"Entity with id {identifier} not found"
+
 class DBInsertionError(KitchnSpyExceptions):
     def __init__(self, error: str, data: str):
         super().__init__()
-        self.display = "An unexpected error occurred"
+        self.display = "Price log error"
         self.log = f"Price log error for {data}: {error}"
 
-class NotFoundError(KitchnSpyExceptions):
+class URLNotFoundError(KitchnSpyExceptions):
     def __init__(self, url: str):
         super().__init__()
-        self.display = "An unexpected error occurred"
-        self.log = f"Product with url {url} not found"
-
+        self.display = "URL not found"
+        self.log = f"Product with URL {url} not found"
 
 class PriceLoggingError(KitchnSpyExceptions):
     def __init__(self, error: str, product_id: str):
@@ -21,20 +26,17 @@ class PriceLoggingError(KitchnSpyExceptions):
         self.display = "An unexpected error occurred"
         self.log = f"DB insert/update error for {product_id}: {error}"
 
-
 class FailedRequestError(KitchnSpyExceptions):
     def __init__(self, attempt: int, detail: str, tries: int):
         super().__init__()
-        self.display = "An unexpected error occurred"
+        self.display = "Failed HTTP request"
         self.log = f"Request failed: {attempt}/{tries}. DETAIL:{detail}"
-
 
 class ParsingError(KitchnSpyExceptions):
     def __init__(self, error: str, url: str):
         super().__init__()
-        self.display = "An unexpected error occurred"
+        self.display = "Error parsing url"
         self.log = f"Error parsing {url}: Detail: {error}"
-
 
 class URIConnectionError(KitchnSpyExceptions):
     def __init__(self):
@@ -42,18 +44,16 @@ class URIConnectionError(KitchnSpyExceptions):
         self.display = "An unexpected error occurred"
         self.log = f"Missing or invalid DB_URI"
 
-
 class EmailFailedError(KitchnSpyExceptions):
     def __init__(self, detail: str):
         super().__init__()
         self.display = "An unexpected error occurred"
         self.log = f"Email failed to send. DETAIL: {detail}"
 
-
 class InvalidIdError(KitchnSpyExceptions):
     def __init__(self, detail: str):
         super().__init__()
-        self.display = "An unexpected error occurred"
+        self.display = "Invalid Identifier"
         self.log = f"Invalid id: {detail}"
 
 class NotSubscribedError(KitchnSpyExceptions):
