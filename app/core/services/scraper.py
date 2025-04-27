@@ -4,7 +4,6 @@ import requests
 from bs4 import BeautifulSoup
 from typing import Dict, Any, List
 from requests.exceptions import RequestException
-from app.core.database.validation.product import ProductData
 from app.core.exceptions import FailedRequestError, ParsingError
 from app.infra.log_service import logger
 
@@ -112,15 +111,16 @@ class Scraper:
         return None
 
 
-    def scrape_product(self, url: str) -> ProductData|Dict[str, Any]:
+    def scrape_product(self, product: dict) -> dict:
         """
         Scrape product information from the given URL.
         Args:
-            url: The product page URL
+            product: Dictionary of the product name and  URL
         Returns:
             Dictionary containing product data or error status
         """
-        logger.info(f"scraping URL: {url}")
+        name , url = product['name'], product['url']
+        logger.info(f"Scraping for {name}")
         response=self.make_request(url)
 
         try:
@@ -131,7 +131,7 @@ class Scraper:
             image_url = self.extract_image_url(soup)
             availability = self.check_availability(soup)
             data = {
-                'name': product_name,
+                'name': name,
                 'product': product_name,
                 'url': url,
                 'price': price,
@@ -146,14 +146,14 @@ class Scraper:
             if missing_data:
                 logger.info(f"Missing data fields: {', '.join(missing_data)}")
 
-            data = ProductData.model_validate(data).model_dump()
+
             return data
 
         except Exception as e:
             raise ParsingError(url = url, error = str(e))
 
 
-    def scrape_all_products(self, product_list: List[Dict[str, str]]) -> List[Dict[str, Any]]:
+    def scrape_products(self, product_list: List[Dict[str, str]]) -> List[Dict[str, Any]]:
         """
         Scrape multiple products and return their data.
         Args:
@@ -163,47 +163,23 @@ class Scraper:
         """
         results = []
         for product in product_list:
-            logger.info(f"Processing {product['name']}")
+            name, url = product['name'], product['url']
+            logger.info(f"Scraping for {product['name']}")
             try:
-                data = self.scrape_product(product['url'])
+                data = self.scrape_product(product)
                 results.append(data)
 
             except FailedRequestError as e:
-                logger.error(f"Failed to request {product['name']}: {str(e)}")
-                results.append({
-                    'name': product['name'],
-                    'product': product['name'],
-                    'url': product['url'],
-                    'status': 'error',
-                    'error_type': 'request_failed',
-                    'error_message': str(e),
-                    'date_checked': datetime.now(timezone.utc),
-                })
+                logger.error(f"Failed to request {name}: {str(e)}")
 
             except ParsingError as e:
-                logger.error(f"Failed to parse {product['name']}: {str(e)}")
-                results.append({
-                    'name': product['name'],
-                    'product': product['name'],
-                    'url': product['url'],
-                    'status': 'error',
-                    'error_type': 'parsing_failed',
-                    'error_message': str(e),
-                    'date_checked': datetime.now(timezone.utc),
-                })
-                raise ParsingError(url=product['url'], error=str(e))
+                logger.error(f"Failed to parse {name}: {str(e)}")
+                continue
 
             except Exception as e:
-                logger.error(f"Unexpected error processing {product['name']}: {str(e)}")
-                results.append({
-                    'name': product['name'],
-                    'product': product['name'],
-                    'url': product['url'],
-                    'status': 'error',
-                    'error_type': 'unexpected',
-                    'error_message': str(e),
-                    'date_checked': datetime.now(timezone.utc)
-                })
+                logger.error(f"Unexpected error processing {name}: {str(e)}")
+                continue
+
 
         return results
 

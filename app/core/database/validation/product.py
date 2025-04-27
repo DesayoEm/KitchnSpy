@@ -10,9 +10,22 @@ class ProductCreate(BaseModel):
     name: str
     url: str
 
+    class Config:
+        schema_extra = {
+            "example": {
+                "name": "Evergreen Artisan",
+                "url": "https://example.com/evergreen-artisan"
+            }
+        }
+
+
 class ProductsCreateBatch(BaseModel):
-    """Schema for batch creating multiple products."""
+    """
+    Schema for batch creating multiple products.
+    """
     products: List[ProductCreate]
+
+
 
 class ProductResponse(BaseModel):
     """Schema for returning product data to the client."""

@@ -1,4 +1,5 @@
 from app.core.database.mongo_gateway import MongoGateway
+from app.core.database.validation.product import ProductCreate, ProductData, ProductsCreateBatch
 from app.core.services.scraper import Scraper
 from app.core.utils import Utils
 from app.routers.products import subscription_crud
@@ -14,29 +15,31 @@ class ProductCrud:
         self.util = Utils()
 
 
-    def add_product(self, url: str) -> dict:
+    def add_product(self, data: ProductCreate) -> dict:
         """
         Scrape a product from the given URL and insert it into the database.
         Args:
-            url (str): The URL of the product to scrape.
+            data (ProductCreate): Pydantic class containing name and URL of the product to scrape.
 
         Returns:
             dict: Metadata about the inserted product.
         """
-        scraped_product = self.scraper.scrape_product(url)
+        scraped_product = self.scraper.scrape_product(data.url)
+        scraped_product = ProductData.model_validate(scraped_product).model_dump()
+
         return self.db.insert_product(scraped_product)
 
 
-    def add_products(self, urls: list[str]) -> list[dict]:
+    def add_products(self, data: ProductsCreateBatch) -> list[dict]:
         """
         Scrape multiple products from a list of URLs and insert them into the database.
         Args:
             urls (list[str]): A list of product URLs to scrape.
-
         Returns:
             list[dict]: List of inserted product metadata.
         """
-        scraped_products = self.scraper.scrape_all_products(urls)
+        data = data.model_dump()
+        scraped_products = self.scraper.scrape_products(data)
         self.db.insert_products(scraped_products)
         return scraped_products
 
