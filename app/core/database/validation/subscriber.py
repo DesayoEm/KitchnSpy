@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
 from datetime import datetime, timezone
 
 class SubscriberData(BaseModel):
@@ -9,3 +9,16 @@ class SubscriberData(BaseModel):
     product_name: str
     product_url: str
     subscribed_on: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+    model_config = ConfigDict(
+        from_attributes=True,
+        extra="ignore",
+        json_schema_extra={
+            "example": {
+                "name": "John Doe",
+                "email_address": "john.doe@example.com",
+
+            }
+        }
+    )

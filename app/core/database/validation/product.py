@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, ConfigDict
 from typing import List
 from datetime import datetime
 import re
@@ -10,13 +10,15 @@ class ProductCreate(BaseModel):
     name: str
     url: str
 
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        from_attributes=True,
+        extra="ignore",
+        json_schema_extra={
             "example": {
-                "name": "Evergreen Artisan",
-                "url": "https://example.com/evergreen-artisan"
-            }
-        }
+                "name": "Glass Mixing bowl",
+                "url": "https://www.kitchenaid.co.uk/mixing-bowls/859711694400/glass-mixing-bowl-4-7-l-5ksm5gb-transparent"
+            }}
+    )
 
 
 class ProductsCreateBatch(BaseModel):
@@ -25,17 +27,24 @@ class ProductsCreateBatch(BaseModel):
     """
     products: List[ProductCreate]
 
-
-
-class ProductResponse(BaseModel):
-    """Schema for returning product data to the client."""
-    name: str | None
-    url: str | None
-    price: str | None
-    is_available: bool | None
-    img_url: str | None
-    date_checked: datetime
-    status: str
+    model_config = ConfigDict(
+        from_attributes=True,
+        extra="ignore",
+        json_schema_extra={
+            "example": {
+                "products": [
+                    {
+                        "name": "Evergreen Artisan",
+                        "url": "https://www.kitchenaid.co.uk/mixers/medium/859711664810/mixer-design-series-4-7l-evergreen-artisan-5ksm180ws-evergreen"
+                    },
+                    {
+                        "name": "Classic White",
+                        "url": "https://www.kitchenaid.co.uk/mixers/medium/859700415030/mixer-tilt-head-4-3l-classic-5k45ss-white"
+                    }
+                ]
+            }
+        }
+    )
 
 class ProductData(BaseModel):
     """Schema for representing product price data over time."""
@@ -57,3 +66,17 @@ class ProductData(BaseModel):
         highest_price = max(numeric_prices)
 
         return f"£ {highest_price:.2f}"
+
+
+class ProductResponse(BaseModel):
+    """Schema for returning product data to the client."""
+    name: str | None
+    url: str | None
+    price: str | None
+    is_available: bool | None
+    img_url: str | None
+    date_checked: datetime
+    status: str
+
+
+

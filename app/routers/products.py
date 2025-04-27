@@ -35,13 +35,13 @@ async def get_price_history(product_id):
 @router.post("/{product_id}/subscribe")
 async def subscribe_to_notifications(data: dict):
     subscription_crud.add_subscriber(data)
-    return "sUCCESSFUL"
+    return {"message": "Subscribed successfully. Please check your email for confirmation."}
 
 
 @router.post("/{product_id}/unsubscribe")
 async def unsubscribe_from_notifications(data: dict):
     subscription_crud.remove_subscriber(data)
-    return "sUCCESSFUL"
+    return {"message": "Unsubscribed successfully. You will no longer receive updates."}
 
 
 @router.delete("/{product_id}")
