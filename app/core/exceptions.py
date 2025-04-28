@@ -2,11 +2,23 @@ class KitchnSpyExceptions(Exception):
     """ Base class for all KitchnSpy exceptions"""
 
 
-class IDNotFoundError(KitchnSpyExceptions):
-    def __init__(self, identifier: str):
+class DocsNotFoundError(KitchnSpyExceptions):
+    def __init__(self, identifier: str, entities:str):
         super().__init__()
-        self.display = "Entity not found"
-        self.log = f"Entity with id {identifier} not found"
+        self.display = f"{entities} not found"
+        self.log = f"{entities} with id {identifier} not found"
+
+class DocNotFoundError(KitchnSpyExceptions):
+    def __init__(self, identifier: str, entity:str):
+        super().__init__()
+        self.display = f"{entity} not found"
+        self.log = f"{entity} with id {identifier} not found"
+
+class DuplicateEntityError(KitchnSpyExceptions):
+    def __init__(self, entry:str, entity:str):
+        super().__init__()
+        self.display = f"{entity} already exists"
+        self.log = f"{entity} with id {entry} already exists"
 
 class DBInsertionError(KitchnSpyExceptions):
     def __init__(self, error: str, data: str):

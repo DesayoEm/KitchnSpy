@@ -13,7 +13,9 @@ class ExceptionMiddleware(BaseHTTPMiddleware):
         PriceLoggingError: status.HTTP_500_INTERNAL_SERVER_ERROR,
         FailedRequestError: status.HTTP_500_INTERNAL_SERVER_ERROR,
         URLNotFoundError: status.HTTP_500_INTERNAL_SERVER_ERROR,
-        IDNotFoundError: status.HTTP_500_INTERNAL_SERVER_ERROR
+        DocNotFoundError: status.HTTP_404_NOT_FOUND,
+        DocsNotFoundError: status.HTTP_404_NOT_FOUND,
+        DocsNotFoundError: status.HTTP_409_CONFLICT
 
     }
 
