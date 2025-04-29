@@ -19,3 +19,7 @@ class Utils:
     def convert_objectid_in_list(documents: list[dict]) -> list[dict]:
         """Convert _id field to string for each document in a list."""
         return [Utils.convert_objectid_to_str(doc) for doc in documents if doc is not None]
+
+    @staticmethod
+    def parse_price(price_str: str) -> float:
+        return float(price_str.replace("£", "").replace(",", ""))

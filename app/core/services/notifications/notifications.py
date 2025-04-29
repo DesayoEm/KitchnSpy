@@ -145,9 +145,11 @@ class NotificationService:
             to_email: str,
             name: str,
             product_name: str,
-            old_price: str,
-            new_price: str,
-            date: str,
+            previous_price: float,
+            new_price: float,
+            price_diff: float,
+            change_type: str,
+            date_checked: str,
             product_link: str
     ) -> bool:
 

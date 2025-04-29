@@ -44,6 +44,12 @@ class NotSubscribedError(KitchnSpyExceptions):
         self.display = "You're not subscribed to notifications for this item"
         self.log = f"Non subscriber attempted to unsubscribe {email_address}"
 
+class URLNotFoundError(KitchnSpyExceptions):
+    def __init__(self, url: str):
+        super().__init__()
+        self.display = "URL not found or invalid"
+        self.log = f"Product with URL {url} not found"
+
 
 class DBInsertionError(KitchnSpyExceptions):
     def __init__(self, error: str, data: str):
@@ -54,7 +60,7 @@ class DBInsertionError(KitchnSpyExceptions):
 class URLNotFoundError(KitchnSpyExceptions):
     def __init__(self, url: str):
         super().__init__()
-        self.display = "URL not found"
+        self.display = "URL not found or invalid"
         self.log = f"Product with URL {url} not found"
 
 class PriceLoggingError(KitchnSpyExceptions):

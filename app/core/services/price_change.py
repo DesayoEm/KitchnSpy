@@ -1,0 +1,45 @@
+from app.core.services.notifications.notifications import NotificationService
+from app.crud.products import ProductCrud
+from app.crud.subscription import SubscriptionCrud
+
+class PriceChangeService:
+    def __init__(self):
+        self.subscribers = SubscriptionCrud()
+        self.notification = NotificationService()
+        self.products = ProductCrud()
+
+    @staticmethod
+    def detect_change(previous_price: float, new_price: float):
+        if new_price > previous_price:
+            price_diff = new_price-previous_price
+            change_type = "Rise"
+            trigger = True
+        elif previous_price > new_price:
+            price_diff = previous_price - new_price
+            change_type = "Drop"
+            trigger = True
+        else:
+            price_diff = 0.0
+            change_type = "No change"
+            trigger = False
+
+        return {
+            "trigger": trigger,
+            "price_diff": price_diff,
+            "change_type": change_type
+        }
+
+    def notify_subscribers(
+        self, product_id: str, previous_price: float, new_price: float, price_diff: float,
+        change_type: str, date_checked: str
+            ):
+        subscribers = self.subscribers.yield_product_subscribers(product_id)
+        product = self.products.find_product(product_id)
+
+        for subscriber in subscribers:
+            self.notification.send_price_change_notification(
+                subscriber['email_address'],  subscriber['name'], product['product_name'],
+                previous_price, new_price, price_diff, change_type, date_checked, product['url']
+            )
+
+

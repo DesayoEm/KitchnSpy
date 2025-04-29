@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from bson import ObjectId
 from app.core.database.mongo_gateway import MongoGateway
 from app.core.exceptions import PriceLoggingError, URLNotFoundError
+from app.core.services.price_change import PriceChangeService
 from app.core.services.scraper import Scraper
 from app.crud.products import ProductCrud
 from app.core.utils import Utils
@@ -17,6 +18,7 @@ class PricesCrud:
         self.products = ProductCrud()
         self.scraper = Scraper()
         self.util = Utils()
+        self.price_service = PriceChangeService
 
 
     def serialize_document(self, document: dict | None) -> dict | None:
@@ -38,23 +40,29 @@ class PricesCrud:
             raise URLNotFoundError(url=existing['url'])
 
         try:
-            previous_price = float(existing["price"].replace("£", "").replace(",", ""))
-            current_price = float(current["price"].replace("£", "").replace(",", ""))
-            price_diff = current_price - previous_price
-            change_dir = "+" if price_diff > 0 else "-"
+            previous_price = self.util.parse_price(existing["price"])
+            new_price  = self.util.parse_price(current["price"])
+
+            change = self.price_service.detect_change(previous_price, new_price)
 
             data = {
                 "product_id": ObjectId(product_id),
                 "previous_price": existing["price"],
                 "current_price": current["price"],
-                "price_diff": price_diff,
-                "change_dir": change_dir,
+                "price_diff": change["price_diff"],
+                "change_type": change["change_type"],
                 "date_checked": datetime.now(timezone.utc)
             }
-
             self.db.insert_price_log(data)
+            if change["trigger"]:
+                date_str = data["date_checked"].strftime('%Y-%m-%d')
+                self.price_service.notify_subscribers(
+                    product_id, previous_price, new_price, change["price_diff"], change["change_type"],
+                    date_str
+                )
+
             return self.serialize_document(data)
-            #if price changes, notify all subs
+
 
         except Exception as e:
             raise PriceLoggingError(product_id=str(product_id), error=str(e))
@@ -72,7 +80,7 @@ class PricesCrud:
 
     def get_price_history(self, product_id: str) -> list[dict]:
         """Retrieve the price history for a specific product."""
-        price_history = self.db.find_price_history(product_id)
+        price_history = self.db.find_pr(product_id)
         return self.serialize_documents(price_history)
 
 
