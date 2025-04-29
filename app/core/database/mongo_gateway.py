@@ -11,8 +11,9 @@ from app.core.exceptions import (
     EmptySearchError, ExistingSubscriptionError, DuplicateEntityError
 )
 from app.core.utils import Utils
-from pymongo.errors import DuplicateKeyError
-from pymongo.results import InsertOneResult, InsertManyResult, UpdateResult
+from pymongo.errors import DuplicateKeyError, BulkWriteError
+from pymongo.results import InsertOneResult, InsertManyResult
+from pymongo import UpdateOne
 from typing import Generator, Any, List, Dict
 load_dotenv()
 
@@ -100,14 +101,30 @@ class MongoGateway:
             raise
 
 
-    def insert_products(self, data: list[dict]) -> InsertManyResult:
-        """Insert multiple product documents into the database."""
+    def insert_or_update_products(self, products: list[dict]) -> dict:
+        """Insert new products and update existing ones based on URL."""
+        operations =[]
+        for product  in products:
+            operations.append(
+                UpdateOne(
+                    {"url": product["url"]},
+                    {"$set": product},
+                    upsert = True
+                )
+            )
         try:
-            result = self.products.insert_many(data)
-            logger.info(f"Inserted {len(result.inserted_ids)} products")
-            return result
+            result = self.products.bulk_write(operations, ordered=False)
+            logger.info(f"Inserted: {result.upserted_count}, Updated: {result.modified_count}")
+            return {
+                "inserted_count": result.upserted_count,
+                "updated_count": result.modified_count
+            }
+
+        except BulkWriteError as e:
+            logger.error(f"Bulk operation failed: {str(e.details)}")
+            raise
         except Exception as e:
-            logger.error(f"Failed to insert products: {str(e)}")
+            logger.error(f"Failed bulk insert/update: {str(e)}")
             raise
 
 
@@ -136,7 +153,7 @@ class MongoGateway:
     def search_products_by_name(self, search_term: str, page: int = 1, per_page: int=10):
         """Search products by name with pagination."""
         search_term = search_term.strip()
-        if not search_term:
+        if len(search_term) == 0:
             raise EmptySearchError(entry=search_term)
 
         try:
@@ -150,6 +167,11 @@ class MongoGateway:
 
             skip = (page - 1) * per_page if page > 0 else 0
             cursor = cursor.skip(skip).limit(per_page)
+
+            results = list(cursor)
+            if not results:
+                raise DocsNotFoundError(entities="Products", page=page)
+            
             yield from self.yield_documents(cursor)
 
         except Exception as e:
@@ -178,24 +200,6 @@ class MongoGateway:
             raise
 
 
-    def bulk_update_products(self, products: List[Dict[str, Any]]) -> int:
-        operations = []
-        for product in products:
-            obj_id = self.validate_obj_id(product['_id'], "Product")
-            operations.append(
-                pymongo.UpdateOne(
-                    {"_id": obj_id},
-                    {"$set": product['data']}
-                )
-            )
-
-            if operations:
-                result = self.products.bulk_write(operations)
-                logger.info(f"Bulk updated {result.modified_count} products")
-                return result.modified_count
-            return 0
-
-
     def replace_product(self, product_id: str, new_document: dict) -> dict:
         """Replace an entire product document."""
         obj_id = self.validate_obj_id(product_id, "Product")
@@ -217,6 +221,22 @@ class MongoGateway:
                 logger.error(f"Error replacing product {product_id}: {str(e)}")
             raise
 
+    def bulk_update_or_replace_products(self, products: List[Dict[str, Any]]) -> int:
+        operations = []
+        for product in products:
+            obj_id = self.validate_obj_id(product['_id'], "Product")
+            operations.append(
+                pymongo.UpdateOne(
+                    {"_id": obj_id},
+                    {"$set": product}
+                )
+            )
+
+            if operations:
+                result = self.products.bulk_write(operations)
+                logger.info(f"Bulk updated {result.modified_count} products")
+                return result.modified_count
+            return 0
 
     def delete_product(self, product_id: str) -> None:
         """Delete a product document by its ID."""

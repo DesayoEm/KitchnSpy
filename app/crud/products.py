@@ -1,5 +1,6 @@
 from app.core.database.mongo_gateway import MongoGateway
 from app.core.database.validation.product import ProductCreate, ProductData, ProductsCreateBatch
+from app.core.exceptions import DocsNotFoundError
 from app.core.services.notifications.notifications import NotificationService
 from app.core.services.scraper import Scraper
 from app.core.utils import Utils
@@ -51,7 +52,7 @@ class ProductCrud:
             for product in scraped_products
         ]
 
-        self.db.insert_products(validated_products)
+        self.db.insert_or_update_products(validated_products)
         return self.serialize_documents(validated_products)
 
 

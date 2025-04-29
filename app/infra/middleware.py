@@ -11,7 +11,7 @@ class ExceptionMiddleware(BaseHTTPMiddleware):
         DBInsertionError: status.HTTP_500_INTERNAL_SERVER_ERROR,
         ParsingError: status.HTTP_500_INTERNAL_SERVER_ERROR,
         PriceLoggingError: status.HTTP_500_INTERNAL_SERVER_ERROR,
-        FailedRequestError: status.HTTP_500_INTERNAL_SERVER_ERROR,
+        FailedRequestError: status.HTTP_400_BAD_REQUEST,
         URLNotFoundError: status.HTTP_400_BAD_REQUEST,
         DocNotFoundError: status.HTTP_404_NOT_FOUND,
         DocsNotFoundError: status.HTTP_404_NOT_FOUND,

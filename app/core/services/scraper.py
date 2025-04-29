@@ -131,7 +131,7 @@ class Scraper:
             image_url = self.extract_image_url(soup)
             availability = self.check_availability(soup)
             data = {
-                'product': name,
+                'name': name,
                 'product_name': product_name,
                 'url': url,
                 'price': price,
