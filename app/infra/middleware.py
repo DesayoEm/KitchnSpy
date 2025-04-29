@@ -15,7 +15,8 @@ class ExceptionMiddleware(BaseHTTPMiddleware):
         URLNotFoundError: status.HTTP_500_INTERNAL_SERVER_ERROR,
         DocNotFoundError: status.HTTP_404_NOT_FOUND,
         DocsNotFoundError: status.HTTP_404_NOT_FOUND,
-        DocsNotFoundError: status.HTTP_409_CONFLICT
+        DuplicateEntityError: status.HTTP_409_CONFLICT,
+        EmptySearchError: status.HTTP_400_BAD_REQUEST
 
     }
 
