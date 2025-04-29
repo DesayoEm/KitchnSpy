@@ -22,15 +22,15 @@ class PricesCrud:
         self.util = Utils()
         self.price_service = PriceChangeService()
 
-
     def serialize_document(self, document: dict | None) -> dict | None:
         """Convert ObjectId to str in a single document."""
-        return self.util.convert_objectid_to_str(document)
-
+        if document:
+            return self.util.convert_objectid_to_str(document)
 
     def serialize_documents(self, documents: list[dict]) -> list[dict]:
         """Convert ObjectId to str in a list of documents."""
-        return [self.util.convert_objectid_to_str(doc) for doc in documents if doc]
+        if documents:
+            return [self.util.convert_objectid_to_str(doc) for doc in documents if doc]
 
 
     def log_price(self, product_id: str) -> dict:

@@ -19,12 +19,13 @@ class SubscriptionCrud:
 
     def serialize_document(self, document: dict | None) -> dict | None:
         """Convert ObjectId to str in a single document."""
-        return self.util.convert_objectid_to_str(document)
-
+        if document:
+            return self.util.convert_objectid_to_str(document)
 
     def serialize_documents(self, documents: list[dict]) -> list[dict]:
         """Convert ObjectId to str in a list of documents."""
-        return [self.util.convert_objectid_to_str(doc) for doc in documents if doc]
+        if documents:
+            return [self.util.convert_objectid_to_str(doc) for doc in documents if doc]
 
 
     def add_subscriber(self, product_id: str, data: SubscriberData) -> None:
@@ -59,7 +60,7 @@ class SubscriptionCrud:
         return self.serialize_documents(subscribers)
 
 
-    def yield_product_subscribers(self, product_id: str) -> Generator[dict]:
+    def yield_product_subscribers(self, product_id: str):
         """Find all subscribers associated with a given product."""
         return self.db.yield_product_subscribers(product_id)
 
