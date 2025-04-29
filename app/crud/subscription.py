@@ -10,7 +10,7 @@ from typing import Generator
 class SubscriptionCrud:
     def __init__(self):
         """
-        Initialize SubscriberCrud with database access, product management, and notification services.
+        Initialize SubscriptionCrud with database access, product management, and notification services.
         """
         self.db = MongoGateway()
         self.products = ProductCrud()
@@ -74,7 +74,7 @@ class SubscriptionCrud:
         subscription_link = f"https://kitchnspy.com/product/subscribe?email={subscriber_data['email_address']}"
 
 
-        self.db.delete_subscriber(subscriber_data['email_address'])
+        self.db.delete_subscriber(subscriber_data['_id'])
         return self.notifier.send_unsubscribed_confirmation(
             to_email=subscriber_data["email_address"],
             name=subscriber_data["name"],
@@ -84,9 +84,5 @@ class SubscriptionCrud:
 
 
     def delete_subscriber(self, subscriber_id: str) -> None:
-        """
-        Delete a subscriber by their ID.
-        Args:
-            subscriber_id (str): The MongoDB ObjectId of the subscriber.
-        """
+        """Delete a subscriber by their ID"""
         self.db.delete_subscriber(subscriber_id)

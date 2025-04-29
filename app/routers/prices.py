@@ -16,3 +16,8 @@ async def get_price_history(product_id: str):
 async def delete_price(price_id: str):
     prices_crud.delete_price(price_id)
     return {"message": "Price deleted successfully"}
+
+@router.delete("/")
+async def delete_old_prices():
+    prices_crud.delete_old_price_logs()
+    return {"message": "Prices deleted successfully"}

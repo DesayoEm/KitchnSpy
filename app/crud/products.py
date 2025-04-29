@@ -1,6 +1,5 @@
 from app.core.database.mongo_gateway import MongoGateway
 from app.core.database.validation.product import ProductCreate, ProductData, ProductsCreateBatch
-from app.core.exceptions import DuplicateEntityError
 from app.core.services.notifications.notifications import NotificationService
 from app.core.services.scraper import Scraper
 from app.core.utils import Utils
@@ -59,12 +58,14 @@ class ProductCrud:
         product = self.db.find_product(product_id)
         return self.serialize_document(product)
 
+    def search_products_by_name(self, search_term: str):
+        """Search products by name."""
+        return self.db.search_products_by_name(search_term)
 
     def find_all_products(self) -> list[dict]:
         """Find all products in the database, sorted by product name."""
         products = self.db.find_all_products()
         return self.serialize_documents(products)
-
 
     def update_or_replace_product(self, product_id: str) -> dict:
         """Update or replace an existing product by re-scraping its data."""
@@ -77,7 +78,7 @@ class ProductCrud:
 
         validated_update = ProductData.model_validate(new_document).model_dump()
 
-        required_fields = ["product_name", "url", "price", "availability", "img_url"]
+        required_fields = ["product_name", "price", "availability", "img_url"]
 
         if any(validated_update.get(field) is None for field in required_fields):
             updated_data = self.db.update_product(product_id, validated_update)

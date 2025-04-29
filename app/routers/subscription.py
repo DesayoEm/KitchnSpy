@@ -15,3 +15,8 @@ async def subscribe_to_notifications(product_id: str, data: SubscriberData):
 async def unsubscribe_from_notifications(product_id: str, email_address: str):
     subscription_crud.remove_subscriber(product_id, email_address)
     return {"message": "Unsubscribed successfully. You will no longer receive updates."}
+
+@router.delete("/{subscriber_id}")
+async def delete_price(subscriber_id: str):
+    subscription_crud.delete_subscriber(subscriber_id)
+    return {"message": "Subscriber deleted successfully"}
