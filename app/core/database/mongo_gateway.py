@@ -1,4 +1,5 @@
 import os
+
 import pymongo
 import re
 from dotenv import load_dotenv
@@ -12,9 +13,10 @@ from app.core.exceptions import (
 )
 from app.core.utils import Utils
 from pymongo.errors import DuplicateKeyError, BulkWriteError
-from pymongo.results import InsertOneResult, InsertManyResult
-from pymongo import UpdateOne
-from typing import Generator, Any, List, Dict
+from pymongo.results import InsertOneResult
+from pymongo.cursor import Cursor
+from pymongo import UpdateOne, ReplaceOne
+from typing import Generator, Any, List, Dict, Mapping
 load_dotenv()
 
 
@@ -85,7 +87,6 @@ class MongoGateway:
 
 
     #Products
-
     def insert_product(self, data: dict) -> InsertOneResult:
         """Insert a single product document into the database."""
         try:
@@ -131,6 +132,14 @@ class MongoGateway:
     def find_product(self, product_id: str) -> dict:
         """Find a single product by its ID."""
         return self.find_by_id(self.products, product_id, "Product")
+
+    def find_product_by_url(self, url: str) -> dict:
+        """Find a single product by its ID."""
+        prod =  self.products.find_one({"url": url})
+        if not prod:
+            raise DocNotFoundError(identifier=url, entity="Product")
+        return prod
+
 
 
     def find_all_products(self, page: int = 1) -> list[dict]:
@@ -186,10 +195,7 @@ class MongoGateway:
             if not self.products.find_one({"_id": obj_id}):
                 raise DocNotFoundError(identifier=product_id, entity="Product")
 
-            result = self.products.replace_one({"_id": obj_id}, new_document)
-            if result.modified_count == 0:
-                logger.info(f"No changes made when updating product {product_id}")
-
+            self.products.replace_one({"_id": obj_id}, new_document)
             logger.info(f"Updated product {product_id}")
             updated_document = self.find_product(product_id)
             return updated_document
@@ -221,22 +227,37 @@ class MongoGateway:
                 logger.error(f"Error replacing product {product_id}: {str(e)}")
             raise
 
-    def bulk_update_or_replace_products(self, products: List[Dict[str, Any]]) -> int:
-        operations = []
-        for product in products:
-            obj_id = self.validate_obj_id(product['_id'], "Product")
-            operations.append(
-                pymongo.UpdateOne(
-                    {"_id": obj_id},
-                    {"$set": product}
-                )
-            )
+    def update_product_with_url(self, url: str, new_document: dict) -> UpdateOne:
+        """Update fields of an existing product document using its url for batch operations."""
+        try:
+            if not self.products.find_one({"url": url}):
+                raise DocNotFoundError(identifier=url, entity="Product")
 
-            if operations:
-                result = self.products.bulk_write(operations)
-                logger.info(f"Bulk updated {result.modified_count} products")
-                return result.modified_count
-            return 0
+            return pymongo.UpdateOne(
+                {"url": url},
+                {"$set": new_document}
+            )
+        except Exception as e:
+            if not isinstance(e, DocNotFoundError):
+                logger.error(f"Error replacing product {url}: {str(e)}")
+            raise
+
+
+    def replace_product_with_url(self, url: str, new_document: dict) -> ReplaceOne:
+        """Replace fields of an existing product document using its url for batch operations."""
+        try:
+            if not self.products.find_one({"url": url}):
+                raise DocNotFoundError(identifier=url, entity="Product")
+
+            return pymongo.ReplaceOne(
+                        {"url": url},
+                        {"$set": new_document}
+                    )
+        except Exception as e:
+            if not isinstance(e, DocNotFoundError):
+                logger.error(f"Error replacing product {url}: {str(e)}")
+            raise
+
 
     def delete_product(self, product_id: str) -> None:
         """Delete a product document by its ID."""
@@ -381,7 +402,7 @@ class MongoGateway:
             raise
 
 
-    def find_subscriber(self, email_address: str) -> dict:
+    def find_subscriber(self, email_address: str) -> Cursor[Mapping[str, Any] | Any]:
         """Find a single subscriber by email address."""
         try:
             subscriber = self.subscribers.find({"email_address": email_address})
@@ -389,10 +410,10 @@ class MongoGateway:
                 raise DocNotFoundError(identifier=email_address, entity="Subscriber")
             return subscriber
 
-        except Exception as e:
+        except Exception:
             raise
 
-    def find_product_subscriber(self, email_address: str, product_id: str) -> dict:
+    def find_product_subscriber(self, email_address: str, product_id: str) -> Cursor[Mapping[str, Any] | Any]:
         """Find a single subscriber by email address and product id."""
         try:
             subscriber = self.subscribers.find({"email_address": email_address, "product_id": product_id})
@@ -400,7 +421,7 @@ class MongoGateway:
                 raise DocNotFoundError(identifier=email_address, entity="Subscriber")
             return subscriber
 
-        except Exception as e:
+        except Exception:
             raise
 
 

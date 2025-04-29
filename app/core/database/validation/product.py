@@ -46,6 +46,12 @@ class ProductsCreateBatch(BaseModel):
         }
     )
 
+class ProductsUpdateBatch(ProductsCreateBatch):
+    """
+    Schema for batch updating multiple products.
+    """
+
+
 class ProductData(ProductCreate):
     """Schema for representing product price data over time."""
     name: str | None

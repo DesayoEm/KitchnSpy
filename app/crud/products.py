@@ -1,9 +1,13 @@
 from app.core.database.mongo_gateway import MongoGateway
-from app.core.database.validation.product import ProductCreate, ProductData, ProductsCreateBatch
-from app.core.exceptions import DocsNotFoundError
+from app.core.database.validation.product import ProductCreate, ProductData, ProductsCreateBatch, ProductsUpdateBatch
+from app.core.exceptions import DocsNotFoundError, FailedRequestError
 from app.core.services.notifications.notifications import NotificationService
 from app.core.services.scraper import Scraper
 from app.core.utils import Utils
+from typing import List, Dict, Any
+
+from app.infra.log_service import logger
+
 
 
 class ProductCrud:
@@ -21,7 +25,7 @@ class ProductCrud:
         if document:
             return self.util.convert_objectid_to_str(document)
 
-    def serialize_documents(self, documents: list[dict]) -> list[dict]:
+    def serialize_documents(self, documents: list[dict]) -> List[Dict]:
         """Convert ObjectId to str in a list of documents."""
         if documents:
             return [self.util.convert_objectid_to_str(doc) for doc in documents if doc]
@@ -41,7 +45,7 @@ class ProductCrud:
         return self.serialize_document(validated_product)
 
 
-    def add_products(self, data: ProductsCreateBatch) -> list[dict]:
+    def add_products(self, data: ProductsCreateBatch) -> List[Dict]:
         """Scrape multiple products from a list and insert them into the database."""
         products = data.products
         product_dicts = [product.model_dump() for product in products]
@@ -56,22 +60,23 @@ class ProductCrud:
         return self.serialize_documents(validated_products)
 
 
-    def find_product(self, product_id: str) -> dict | None:
+    def find_product(self, product_id: str) -> Dict | None:
         """Find a single product in the database by its ID."""
         product = self.db.find_product(product_id)
         return self.serialize_document(product)
 
-    def search_products_by_name(self, search_term: str):
+    def search_products_by_name(self, search_term: str) -> List[Dict]:
         """Search products by name."""
         return self.db.search_products_by_name(search_term)
 
 
-    def find_all_products(self) -> list[dict]:
+    def find_all_products(self) -> List[Dict]:
         """Find all products in the database, sorted by product name."""
         products = self.db.find_all_products()
         return self.serialize_documents(products)
 
-    def update_or_replace_product(self, product_id: str) -> dict:
+
+    def update_or_replace_product(self, product_id: str) -> Dict:
         """Update or replace an existing product by re-scraping its data."""
 
         existing = self.db.find_product(product_id)
@@ -90,6 +95,47 @@ class ProductCrud:
         else:
             updated_data = self.db.replace_product(product_id, validated_update)
             return self.serialize_document(updated_data)
+
+
+    def bulk_update_products(self, data: ProductsUpdateBatch):
+        """Bulk update fields for existing product documents."""
+        products = data.products
+        product_dicts = [product.model_dump() for product in products]
+        operations = []
+
+        for product_dict in product_dicts:
+            try:
+                url = product_dict["url"]
+                existing = self.db.find_product_by_url(url)
+                new_document = self.scraper.scrape_product({
+                    "name": existing["name"],
+                    "url": existing["url"]
+                })
+
+                required_fields = ["product_name", "price", "availability", "img_url"]
+                validated_update = ProductData.model_validate(new_document).model_dump()
+
+                if any(validated_update.get(field) is None for field in required_fields):
+                    operations.append (self.db.update_product_with_url(url, validated_update))
+                else:
+                    operations.append(self.db.replace_product_with_url(url, validated_update))
+
+            except DocsNotFoundError:
+                logger.info(f"Product with url{product_dict['url']} not found")
+                continue
+            except FailedRequestError:
+                logger.info(f"Request failed for url{product_dict['url']}")
+                continue
+            except Exception:
+                raise
+
+        if operations:
+            result = self.db.products.bulk_write(operations, ordered=False)
+            logger.info(f"Bulk updated {result.modified_count} products")
+            return result.modified_count
+
+        logger.info("No products updated")
+        return 0
 
 
     def delete_product(self, product_id: str) -> None:

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.core.database.validation.product import ProductCreate, ProductsCreateBatch
+from app.core.database.validation.product import ProductCreate, ProductsCreateBatch, ProductsUpdateBatch
 from app.crud.products import ProductCrud
 
 router = APIRouter()
@@ -28,6 +28,10 @@ async def get_all_products():
 @router.put("/{product_id}")
 async def update_product(product_id: str):
     return products_crud.update_or_replace_product(product_id)
+
+@router.put("/")
+async def update_products(data: ProductsUpdateBatch):
+    return products_crud.bulk_update_products(data)
 
 @router.delete("/{product_id}")
 async def delete_product(product_id: str):
