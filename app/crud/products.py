@@ -1,6 +1,5 @@
 from app.core.database.mongo_gateway import MongoGateway
 from app.core.database.validation.product import ProductCreate, ProductData, ProductsCreateBatch
-from app.core.exceptions import IDNotFoundError
 from app.core.services.notifications.notifications import NotificationService
 from app.core.services.scraper import Scraper
 from app.core.utils import Utils
@@ -64,21 +63,19 @@ class ProductCrud:
         return self.serialize_documents(products)
 
 
-    def update_product(self, product_id: str) -> dict:
-        """Update an existing product by re-scraping its data."""
+    def update_or_replace_product(self, product_id: str) -> dict:
+        """Update or replace an existing product by re-scraping its data."""
 
         existing = self.db.find_product(product_id)
-        if not existing:
-            raise IDNotFoundError(identifier=product_id)
-
-        updated_scrape = self.scraper.scrape_product({
+        new_document = self.scraper.scrape_product({
             "name": existing["name"],
             "url": existing["url"]
         })
 
-        validated_update = ProductData.model_validate(updated_scrape).model_dump()
+        validated_update = ProductData.model_validate(new_document).model_dump()
 
-        required_fields = ["product", "url", "price", "availability", "img_url"]
+        required_fields = ["product_name", "url", "price", "availability", "img_url"]
+
         if any(validated_update.get(field) is None for field in required_fields):
             updated_data = self.db.update_product(product_id, validated_update)
             return self.serialize_document(updated_data)

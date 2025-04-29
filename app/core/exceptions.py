@@ -41,8 +41,9 @@ class ExistingSubscriptionError(KitchnSpyExceptions):
 class NotSubscribedError(KitchnSpyExceptions):
     def __init__(self, email_address: str):
         super().__init__()
-        self.display = "You're not subscribed to  notifications for this item"
+        self.display = "You're not subscribed to notifications for this item"
         self.log = f"Non subscriber attempted to unsubscribe {email_address}"
+
 
 class DBInsertionError(KitchnSpyExceptions):
     def __init__(self, error: str, data: str):

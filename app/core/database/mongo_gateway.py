@@ -22,7 +22,6 @@ load_dotenv()
 class MongoGateway:
     """
     Gateway class for interacting with MongoDB collections:
-    products, price_logs, and subscribers.
     """
 
     def __init__(self):
@@ -66,7 +65,7 @@ class MongoGateway:
     def find_by_id(self, collection, doc_id: str , entity_name: str):
         """Find a document by its ID in the specified collection."""
         obj_id = self.validate_obj_id(doc_id, entity_name)
-        document = collection.finf_one({"_id":obj_id})
+        document = collection.find_one({"_id":obj_id})
         if not document:
             raise DocNotFoundError(identifier=doc_id, entity=entity_name)
 
@@ -112,15 +111,12 @@ class MongoGateway:
         return self.find_by_id(self.products, product_id, "Product")
 
 
-    def find_all_products(self, page: int = 1, #page no is 1-indexed
-                          per_page: int = 10,
-                          sort_field: str = 'product_name',
-                          sort_direction: int = pymongo.ASCENDING
-            ) -> list[dict]:
+    def find_all_products(self, page: int = 1) -> list[dict]:
         """Retrieve all products with pagination."""
+
         try:
-            cursor = self.products.find({}).sort(sort_field, sort_direction)
-            products = self.paginate_results(cursor, page, per_page)
+            cursor = self.products.find({}).sort("product_name", pymongo.ASCENDING)
+            products = self.paginate_results(cursor, page, 10)
 
             if not products:
                 raise DocsNotFoundError(entities="Products", page = page)
@@ -156,7 +152,7 @@ class MongoGateway:
             raise
 
 
-    def update_product(self, product_id: str, new_document: dict) -> UpdateResult:
+    def update_product(self, product_id: str, new_document: dict) -> dict:
         """Update fields of an existing product document."""
         obj_id = self.validate_obj_id(product_id, "Product")
         try:
@@ -164,8 +160,12 @@ class MongoGateway:
                 raise DocNotFoundError(identifier=product_id, entity="Product")
 
             result = self.products.replace_one({"_id": obj_id}, new_document)
-            logger.info(f"Replaced product {product_id}")
-            return result
+            if result.modified_count == 0:
+                logger.info(f"No changes made when updating product {product_id}")
+
+            logger.info(f"Updated product {product_id}")
+            updated_document = self.find_product(product_id)
+            return updated_document
 
         except Exception as e:
             if not isinstance(e, DocNotFoundError):
@@ -191,18 +191,22 @@ class MongoGateway:
             return 0
 
 
-    def replace_product(self, product_id: str, new_document: dict) -> UpdateResult:
+    def replace_product(self, product_id: str, new_document: dict) -> dict:
         """Replace an entire product document."""
         obj_id = self.validate_obj_id(product_id, "Product")
 
         try:
-            if self.products.find_one({"_id": obj_id}) is None:
-                logger.warning(f"Product not found with ID: {product_id}")
+            if not self.products.find_one({"_id": obj_id}):
                 raise DocNotFoundError(identifier=product_id, entity="Product")
 
             result = self.products.replace_one({"_id": obj_id}, new_document)
+            if result.modified_count == 0:
+                logger.info(f"No changes made when updating product {product_id}")
             logger.info(f"Replaced product {product_id}")
-            return result
+
+            replaced_document = self.find_product(product_id)
+            return replaced_document
+
         except Exception as e:
             if not isinstance(e, DocNotFoundError):
                 logger.error(f"Error replacing product {product_id}: {str(e)}")
@@ -239,11 +243,11 @@ class MongoGateway:
             logger.error(f"Failed to insert price log: {str(e)}")
             raise
 
+
     def yield_product_price_history(self, product_id: str) -> Generator[Dict, None, None]:
         """Yield serialized price history documents for a product one by one with pagination."""
 
         obj_id = self.validate_obj_id(product_id, "Product")
-
         try:
             cursor = self.price_logs.find({"product_id": obj_id})
             return self.yield_documents(cursor)
