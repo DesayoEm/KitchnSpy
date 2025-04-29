@@ -8,7 +8,7 @@ from bson.errors import InvalidId
 from app.infra.log_service import logger
 from app.core.exceptions import (
     URIConnectionError, InvalidIdError, DocNotFoundError, DocsNotFoundError,
-    EmptySearchError, ExistingSubscriptionError
+    EmptySearchError, ExistingSubscriptionError, DuplicateEntityError
 )
 from app.core.utils import Utils
 from pymongo.errors import DuplicateKeyError
@@ -45,6 +45,7 @@ class MongoGateway:
 
     def ensure_indexes(self):
         self.products.create_index([("product_name", pymongo.ASCENDING)])
+        self.products.create_index("url", unique=True)
         self.price_logs.create_index([("product_id", pymongo.ASCENDING),
                     ("date_checked", pymongo.ASCENDING)]
             )
@@ -83,12 +84,17 @@ class MongoGateway:
 
 
     #Products
+
     def insert_product(self, data: dict) -> InsertOneResult:
         """Insert a single product document into the database."""
         try:
             result = self.products.insert_one(data)
             logger.info(f"Inserted product with ID: {result.inserted_id}")
             return result
+
+        except DuplicateKeyError:
+            raise DuplicateEntityError(entry=data["url"], entity="Product")
+
         except Exception as e:
             logger.error(f"Failed to insert product: {str(e)}")
             raise

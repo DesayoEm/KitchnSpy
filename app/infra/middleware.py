@@ -12,11 +12,15 @@ class ExceptionMiddleware(BaseHTTPMiddleware):
         ParsingError: status.HTTP_500_INTERNAL_SERVER_ERROR,
         PriceLoggingError: status.HTTP_500_INTERNAL_SERVER_ERROR,
         FailedRequestError: status.HTTP_500_INTERNAL_SERVER_ERROR,
-        URLNotFoundError: status.HTTP_500_INTERNAL_SERVER_ERROR,
+        URLNotFoundError: status.HTTP_400_BAD_REQUEST,
         DocNotFoundError: status.HTTP_404_NOT_FOUND,
         DocsNotFoundError: status.HTTP_404_NOT_FOUND,
         DuplicateEntityError: status.HTTP_409_CONFLICT,
-        EmptySearchError: status.HTTP_400_BAD_REQUEST
+        EmptySearchError: status.HTTP_400_BAD_REQUEST,
+        InvalidIdError: status.HTTP_400_BAD_REQUEST,
+        ExistingSubscriptionError: status.HTTP_409_CONFLICT,
+        NotSubscribedError: status.HTTP_409_CONFLICT,
+        EmailFailedError: status.HTTP_500_INTERNAL_SERVER_ERROR,
 
     }
 

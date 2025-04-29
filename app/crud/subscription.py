@@ -4,7 +4,7 @@ from app.core.services.notifications.notifications import NotificationService
 from app.core.utils import Utils
 from app.crud.products import ProductCrud
 from app.core.database.validation.subscription import SubscriberData
-from typing import Generator, Any, List, Dict
+from typing import Generator
 
 
 class SubscriptionCrud:
@@ -81,7 +81,7 @@ class SubscriptionCrud:
             product_name=subscriber_data["product_name"],
             subscription_link=subscription_link
         )
-    
+
 
     def delete_subscriber(self, subscriber_id: str) -> None:
         """

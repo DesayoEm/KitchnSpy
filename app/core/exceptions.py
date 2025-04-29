@@ -50,18 +50,11 @@ class URLNotFoundError(KitchnSpyExceptions):
         self.display = "URL not found or invalid"
         self.log = f"Product with URL {url} not found"
 
-
 class DBInsertionError(KitchnSpyExceptions):
     def __init__(self, error: str, data: str):
         super().__init__()
         self.display = "Price log error"
         self.log = f"Price log error for {data}: {error}"
-
-class URLNotFoundError(KitchnSpyExceptions):
-    def __init__(self, url: str):
-        super().__init__()
-        self.display = "URL not found or invalid"
-        self.log = f"Product with URL {url} not found"
 
 class PriceLoggingError(KitchnSpyExceptions):
     def __init__(self, error: str, product_id: str):

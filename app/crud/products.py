@@ -1,5 +1,6 @@
 from app.core.database.mongo_gateway import MongoGateway
 from app.core.database.validation.product import ProductCreate, ProductData, ProductsCreateBatch
+from app.core.exceptions import DuplicateEntityError
 from app.core.services.notifications.notifications import NotificationService
 from app.core.services.scraper import Scraper
 from app.core.utils import Utils
@@ -26,6 +27,7 @@ class ProductCrud:
 
     def add_product(self, data: ProductCreate) -> dict:
         """Scrape a product from the given name and URL and insert it into the database."""
+
         scraped_product = self.scraper.scrape_product({
             "name": data.name,
             "url": data.url
@@ -33,6 +35,7 @@ class ProductCrud:
 
         validated_product = ProductData.model_validate(scraped_product).model_dump()
         self.db.insert_product(validated_product)
+
         return self.serialize_document(validated_product)
 
 
