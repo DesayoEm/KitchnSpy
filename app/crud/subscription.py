@@ -4,6 +4,7 @@ from app.core.services.notifications.notifications import NotificationService
 from app.core.utils import Utils
 from app.crud.products import ProductCrud
 from app.core.database.validation.subscription import SubscriberData
+from typing import Generator, Any, List, Dict
 
 
 class SubscriptionCrud:
@@ -58,18 +59,20 @@ class SubscriptionCrud:
         return self.serialize_documents(subscribers)
 
 
-    def yield_product_subscribers(self, product_id: str) -> list[dict]:
+    def yield_product_subscribers(self, product_id: str) -> Generator[dict]:
         """Find all subscribers associated with a given product."""
         return self.db.yield_product_subscribers(product_id)
 
 
-    def remove_subscriber(self, product_id: str, email_address: str) -> bool:
+    def remove_subscriber(self, email_address: str, product_id: str) -> bool:
         """Remove a subscriber and send them an un-subscription confirmation email."""
-        subscriber_data = self.db.find_subscriber(product_id, email_address)
+
+        subscriber_data = self.db.find_product_subscriber(email_address, product_id)
         if not subscriber_data:
             raise NotSubscribedError(email_address = email_address)
 
         subscription_link = f"https://kitchnspy.com/product/subscribe?email={subscriber_data['email_address']}"
+
 
         self.db.delete_subscriber(subscriber_data['email_address'])
         return self.notifier.send_unsubscribed_confirmation(
@@ -78,6 +81,7 @@ class SubscriptionCrud:
             product_name=subscriber_data["product_name"],
             subscription_link=subscription_link
         )
+    
 
     def delete_subscriber(self, subscriber_id: str) -> None:
         """

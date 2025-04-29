@@ -18,7 +18,7 @@ class PricesCrud:
         self.products = ProductCrud()
         self.scraper = Scraper()
         self.util = Utils()
-        self.price_service = PriceChangeService
+        self.price_service = PriceChangeService()
 
 
     def serialize_document(self, document: dict | None) -> dict | None:
@@ -80,8 +80,8 @@ class PricesCrud:
 
     def get_price_history(self, product_id: str) -> list[dict]:
         """Retrieve the price history for a specific product."""
-        price_history = self.db.find_pr(product_id)
-        return self.serialize_documents(price_history)
+        price_history = self.db.yield_and_paginate_product_price_history(product_id)
+        return list(self.serialize_documents([price for price in price_history]))
 
 
     def yield_product_price_history(self, product_id: str) -> Iterator[dict]:

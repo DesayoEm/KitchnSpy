@@ -13,8 +13,7 @@ from app.core.exceptions import (
 from app.core.utils import Utils
 from pymongo.errors import DuplicateKeyError
 from pymongo.results import InsertOneResult, InsertManyResult, UpdateResult
-from contextlib import contextmanager
-from typing import Generator, Optional, Any, List, Dict
+from typing import Generator, Any, List, Dict
 load_dotenv()
 
 
@@ -360,6 +359,17 @@ class MongoGateway:
         """Find a single subscriber by email address."""
         try:
             subscriber = self.subscribers.find({"email_address": email_address})
+            if not subscriber:
+                raise DocNotFoundError(identifier=email_address, entity="Subscriber")
+            return subscriber
+
+        except Exception as e:
+            raise
+
+    def find_product_subscriber(self, email_address: str, product_id: str) -> dict:
+        """Find a single subscriber by email address and product id."""
+        try:
+            subscriber = self.subscribers.find({"email_address": email_address, "product_id": product_id})
             if not subscriber:
                 raise DocNotFoundError(identifier=email_address, entity="Subscriber")
             return subscriber
