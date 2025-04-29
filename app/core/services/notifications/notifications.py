@@ -152,10 +152,11 @@ class NotificationService:
             date_checked: str,
             product_link: str
     ) -> bool:
-
         """Send a notification email to a subscriber."""
 
-        subject = f"Price Update for {product_name}"
+        change_dir = "less" if change_type == "Drop" else "more"
+
+        subject = f"Price {change_type} Update for {product_name}"
 
         html_body = f"""
         <html>
@@ -222,9 +223,11 @@ class NotificationService:
                 </div>
                 <div class="content">
                     <p><strong>{product_name}</strong> had a little price shake-up:</p>
-                    <p class="price">Before: £{old_price}</p>
-                    <p class="price">Now: £{new_price}</p>
-                    <p><small>(as of {date})</small></p>
+                    <p class="price">Before: £{previous_price:.2f}</p>
+                    <p class="price">Now: £{new_price:.2f}</p>
+                    <p class="price">Change: £{price_diff:.2f} {change_dir}</p>
+
+                    <p><small>(as of {date_checked})</small></p>
                     <p>If this one's been sitting on your wishlist, now might be your moment.</p>
                     <a href="{product_link}" class="button">Check it out</a>
                 </div>
@@ -238,23 +241,24 @@ class NotificationService:
         """
 
         text_body = f"""
-        Hey {name},
+    Hey {name},
 
-        Quick heads-up: the price on '{product_name}' just changed.
+    Quick heads-up: the price on '{product_name}' just changed.
 
-        Before: £{old_price}
-        Now: £{new_price}
-        (as of {date})
+    Before: £{previous_price:.2f}
+    Now: £{new_price:.2f}
+    (as of {date_checked})
 
-        If it's been on your radar, now might be the time to check it out:
-        {product_link}
+    If it's been on your radar, now might be the time to check it out:
+    {product_link}
 
-        I'll keep you posted with more useful updates (promise — no spam).
+    I'll keep you posted with more useful updates (promise — no spam).
 
-        — Desayo
-        """
+    — Desayo
+    """
 
         return self.email_service.send_email(to_email, subject, html_body, text_body)
+
 
 
     def send_product_removed_notification(
