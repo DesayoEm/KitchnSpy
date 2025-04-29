@@ -5,9 +5,6 @@ class SubscriberData(BaseModel):
     """Schema for subscriber data associated with a product."""
     name: str
     email_address: EmailStr
-    product_id: str
-    product_name: str
-    product_url: str
     subscribed_on: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     model_config = ConfigDict(
@@ -15,7 +12,7 @@ class SubscriberData(BaseModel):
         extra="ignore",
         json_schema_extra={
             "example": {
-                "name": "John Doe",
+                "name": "moria",
                 "email_address": "Labaekaadesayo@gmail.com",
 
             }

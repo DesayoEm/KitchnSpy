@@ -276,14 +276,12 @@ class MongoGateway:
             raise
 
 
-
     # Price Logs
-    def insert_price_log(self, data: dict) -> InsertOneResult:
+    def insert_price_log(self, data: dict) -> None:
         """Insert a single price log document into the database."""
         try:
             result = self.price_logs.insert_one(data)
             logger.info(f"Inserted price log with ID: {result.inserted_id}")
-            return result
 
         except Exception as e:
             logger.error(f"Failed to insert price log: {str(e)}")
@@ -327,7 +325,10 @@ class MongoGateway:
         """Retrieve all price logs with pagination, sorted by date checked."""
         try:
             cursor = self.price_logs.find({}).sort("date_checked", pymongo.ASCENDING)
-            return self.paginate_results(cursor, page, per_page)
+            prices = self.paginate_results(cursor, page, per_page)
+            if not prices:
+                raise DocsNotFoundError(entities="Prices", page=page)
+            return prices
 
         except Exception as e:
             logger.error(f"Error retrieving price logs: {str(e)}")

@@ -1,7 +1,7 @@
 from datetime import datetime, timezone, timedelta
 from bson import ObjectId
 from app.core.database.mongo_gateway import MongoGateway
-from app.core.exceptions import PriceLoggingError, URLNotFoundError
+from app.core.exceptions import URLNotFoundError
 from app.core.services.price_change import PriceChangeService
 from app.core.services.scraper import Scraper
 from app.crud.products import ProductCrud
@@ -36,26 +36,31 @@ class PricesCrud:
     def log_price(self, product_id: str) -> dict:
         """Log the current price of a product by scraping it and comparing it to the existing stored price."""
         existing = self.db.find_product(product_id)
-        new = self.scraper.scrape_product(existing['url'])
-
+        new= self.scraper.scrape_product({
+                    "name": existing["name"],
+                    "url": existing["url"]
+                })
         if not new:
             raise URLNotFoundError(url=existing['url'])
 
         try:
             previous_price = self.util.parse_price(existing["price"])
-            new_price  = self.util.parse_price(new["price"])
+            cleaned_new_price = self.util.validate_price_format(new["price"])
+            new_price  = self.util.parse_price(cleaned_new_price)
 
             change = self.price_service.detect_change(previous_price, new_price)
 
             data = {
-                "product_id": ObjectId(product_id),
+                "product_id": str(ObjectId(product_id)),
                 "previous_price": existing["price"],
-                "current_price": new["price"],
+                "current_price": cleaned_new_price,
                 "price_diff": change["price_diff"],
                 "change_type": change["change_type"],
                 "date_checked": datetime.now(timezone.utc)
             }
+
             self.db.insert_price_log(data)
+
             if change["trigger"]:#event
                 date_str = data["date_checked"].strftime('%Y-%m-%d')
                 self.price_service.notify_subscribers(
@@ -65,9 +70,8 @@ class PricesCrud:
 
             return self.serialize_document(data)
 
-
-        except Exception as e:
-            raise PriceLoggingError(product_id=str(product_id), error=str(e))
+        except Exception:
+            raise
 
 
     def log_prices(self, products: list[dict]) -> list[dict]:
@@ -79,6 +83,7 @@ class PricesCrud:
 
         return logged_prices
 
+
     def find_all_prices(self) -> list[dict]:
         """Retrieve all price logs across all products."""
         prices = self.db.find_all_price_logs()
@@ -87,7 +92,8 @@ class PricesCrud:
     def get_price_history(self, product_id: str) -> list[dict]:
         """Retrieve the price history for a specific product."""
         price_history = self.db.yield_and_paginate_product_price_history(product_id)
-        return list(self.serialize_documents([price for price in price_history]))
+        return self.serialize_documents(list(price_history))
+
 
     def yield_product_price_history(self, product_id: str) -> Iterator[dict]:
         """Yield the price history for a specific product one by one."""
@@ -97,8 +103,7 @@ class PricesCrud:
         """Delete a price log entry by its ID."""
         self.db.delete_price(price_id)
 
-
-    def delete_old_price_logs(self) -> None:
+    def delete_old_price_logs(self) -> int:
         """Delete all price log entries older than 1 year ago."""
         cutoff_date = datetime.now(timezone.utc) - timedelta(days=365)
 
@@ -107,5 +112,7 @@ class PricesCrud:
         })
         deleted_count = result.deleted_count
         logger.info(f"{deleted_count} price logs deleted")
+        return deleted_count
+
 
 
