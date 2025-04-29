@@ -65,6 +65,7 @@ class ProductCrud:
         """Search products by name."""
         return self.db.search_products_by_name(search_term)
 
+
     def find_all_products(self) -> list[dict]:
         """Find all products in the database, sorted by product name."""
         products = self.db.find_all_products()

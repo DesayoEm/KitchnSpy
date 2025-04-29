@@ -171,8 +171,8 @@ class MongoGateway:
             results = list(cursor)
             if not results:
                 raise DocsNotFoundError(entities="Products", page=page)
-            
-            yield from self.yield_documents(cursor)
+
+            yield from self.yield_documents(results)
 
         except Exception as e:
             logger.error(f"Error searching products: {str(e)}")
