@@ -359,26 +359,6 @@ class MongoGateway:
             raise
 
 
-    def find_subscribers(self, product_id: str, page: int = 1, per_page: int = 20) -> list[dict]:
-        """Retrieve all subscribers for a given product with pagination."""
-        obj_id = self.validate_obj_id(product_id, "Product")
-
-        try:
-            cursor = self.subscribers.find(
-                {"product_id": obj_id}).sort("email_address", pymongo.ASCENDING
-                    )
-            subscribers = self.paginate_results(cursor, page, per_page)
-
-            if not subscribers:
-                raise DocsNotFoundError(entities="Subscribers", page = page)
-            return subscribers
-
-        except Exception as e:
-            if not isinstance(e, DocNotFoundError):
-                logger.error(f"Error retrieving subscribers for product {product_id}: {str(e)}")
-            raise
-
-
     def yield_product_subscribers(self, product_id: str) -> Generator[
         Dict, None, None]:
         """Yield subscriber documents for a product one by one with."""
@@ -391,28 +371,56 @@ class MongoGateway:
             raise
 
 
-    def find_subscriber(self, email_address: str) -> Cursor[Mapping[str, Any] | Any]:
-        """Find a single subscriber by email address."""
+    def yield_and_paginate_product_subscribers(
+            self, product_id: str, page: int = 1, per_page: int = 20
+    ) -> Generator[Dict, None, None]:
+        """Yield subscriber documents for a product one by one with."""
+        try:
+            skip = (page - 1) * per_page if page > 0 else 0
+
+            cursor = self.subscribers.find({"product_id": product_id})
+            cursor.sort("subscribed_on", pymongo.ASCENDING)\
+            .skip(skip).limit(per_page)
+            yield from self.yield_documents(cursor)
+
+        except Exception as e:
+            logger.error(f"Error yielding all subscribers: {str(e)}")
+            raise
+
+
+    def yield_and_paginate_all_subscribers(self, page: int = 1, per_page: int = 20) -> Generator[Dict, None, None]:
+        """Yield subscriber documents for a product one by one with."""
+        try:
+            skip = (page - 1) * per_page if page > 0 else 0
+
+            cursor = self.subscribers.find({}) \
+                .sort("subscribed_on", pymongo.ASCENDING) \
+                .skip(skip).limit(per_page)
+
+            yield from self.yield_documents(cursor)
+
+        except Exception as e:
+            logger.error(f"Error yielding all subscribers: {str(e)}")
+            raise
+
+    def find_subscriber_by_email(self, email_address: str) -> list[dict]:
+        """Find a single subscriber by a field-value filter."""
         try:
             subscriber = self.subscribers.find({"email_address": email_address})
+            logger.info(f"Finding by {email_address}. type{type(email_address)}")
             if not subscriber:
                 raise DocNotFoundError(identifier=email_address, entity="Subscriber")
-            return subscriber
-
+            return list(subscriber)
         except Exception:
             raise
+
+
 
     def find_product_subscriber(self, email_address: str, product_id: str) -> dict:
         """Find a single subscriber by email address and product id."""
-        try:
-            subscriber = self.subscribers.find_one({"email_address": email_address, "product_id": product_id})
-            if not subscriber:
-                raise DocNotFoundError(identifier=email_address, entity="Subscriber")
-            return subscriber
-
-        except Exception:
-            raise
-
+        return self.subscribers.find_one(
+            {"email_address": email_address.lower(), "product_id": product_id}
+        )
 
     def delete_subscriber(self, subscriber_id: str) -> bool:
         """Delete a subscriber document by its ID.

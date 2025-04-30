@@ -88,8 +88,8 @@ class NotificationService:
                     padding: 20px;
                 }}
                 .header {{
-                    background-color: #5e2945;;
-                    color: #fefae0;
+                    background-color: #893959;
+                    color: #000000;
                     padding: 20px;
                     text-align: center;
                     border-radius: 12px;
@@ -112,17 +112,20 @@ class NotificationService:
         <body>
             <div class="container">
                 <div class="header">
-                    <h2>You're all set, {name}</h2>
+                    <h2>You're all set, {name.title()}. </h2>
                 </div>
                 <div class="content">
                     <p>You’ve been unsubscribed from alerts for <strong>{product_name}</strong>.</p>
-                    <p>No more notifications from us about this item — but you’re always welcome back if you change your mind.</p>
+                    <p>No more notifications from us about this item but you’re always welcome back if you change your mind.</p>
+                    </br>
+                    <p style="font-size: 0.9em;"><a href="{subscription_link}">Subscribe again</a> if you ever change your mind.</p>
                     
                 </div>
                 <div class="footer">
                     This was a one-time unsubscribe confirmation. No further emails will be sent.
                     <br>
-                    f"{subscription_link}"
+                    
+        
                 </div>
             </div>
         </body>
@@ -134,9 +137,9 @@ class NotificationService:
 
         You've been unsubscribed from price alerts for '{product_name}'.
 
-        No more notifications from us — but you can re-subscribe if you change your mind.
+        No more notifications from us but you can re-subscribe if you change your mind.
         
-        f"{subscription_link}"
+        "{subscription_link}"
 
         """
 
@@ -156,7 +159,7 @@ class NotificationService:
     ) -> bool:
         """Send a notification email to a subscriber."""
 
-        change_dir = "Less" if change_type == "Drop" else "more"
+        change_dir = "less" if change_type == "drop" else "more"
 
         subject = f"Price {change_type} Update for {product_name}"
 
@@ -299,14 +302,14 @@ class NotificationService:
                     padding: 20px;
                 }}
                 .header {{
-                    background-color: #bc6c25;
-                    color: #fefae0;
-                    padding: 20px;
+                    background-color: #893959;
+                    color: #000000;
+                    padding: 8px;
                     text-align: center;
                     border-radius: 12px;
                 }}
                 .content {{
-                    background-color: #fefae0;
+                    background-color: #fdeef0;
                     padding: 20px;
                     border-radius: 12px;
                     margin-top: 20px;
@@ -323,7 +326,7 @@ class NotificationService:
         <body>
             <div class="container">
                 <div class="header">
-                    <h2>Hello {name},</h2>
+                    <h2>Hello {name.title()},</h2>
                 </div>
                 <div class="content">
                     <p>We wanted to let you know that we are no longer tracking <strong>{product_name}</strong> on KitchnSpy.</p>
@@ -332,7 +335,7 @@ class NotificationService:
                 </div>
                 <div class="footer">
                     Thank you for being part of the KitchnSpy community.
-                    <br>— Desayo
+                
                 </div>
             </div>
         </body>
@@ -340,7 +343,7 @@ class NotificationService:
         """
 
         text_body = f"""
-        Hello {name},
+        Hello {name.title()},
 
         We wanted to let you know that we are no longer tracking '{product_name}' on KitchnSpy.
 

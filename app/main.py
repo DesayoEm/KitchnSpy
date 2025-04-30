@@ -22,7 +22,7 @@ app.include_router(products.router, prefix=f"/api/{version}/products",
                    tags=["Products"])
 app.include_router(prices.router, prefix=f"/api/{version}/prices",
                    tags=["Prices"])
-app.include_router(subscription.router, prefix=f"/api/{version}/subscribers",
+app.include_router(subscription.router, prefix=f"/api/{version}",
                    tags=["Subscribers"])
 
 

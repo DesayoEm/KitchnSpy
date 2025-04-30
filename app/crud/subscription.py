@@ -53,15 +53,19 @@ class SubscriptionCrud:
             unsubscribe_link=unsubscribe_link
         )
 
-    def find_all_subscribers(self, product_id: str) -> list[dict]:
-        """Find all subscribers associated with a given product."""
-        subscribers = list(self.db.find_subscribers(product_id))
-        return self.serialize_documents(subscribers)
+    def get_subscriber_by_email(self, value: str):
+        """Yield all subscribers associated with a given product."""
+        subscriber = self.db.find_subscriber_by_email(value)
+        return self.serialize_documents(subscriber)
 
 
-    def yield_product_subscribers(self, product_id: str):
+    def yield_product_subscribers(self, product_id: str,  page, per_page):
         """Find all subscribers associated with a given product."""
-        return self.db.yield_product_subscribers(product_id)
+        return self.db.yield_and_paginate_product_subscribers(product_id, page, per_page)
+
+    def yield_all_subscribers(self, page, per_page) :
+        """Yield all subscribers in the database."""
+        return self.db.yield_and_paginate_all_subscribers(page, per_page)
 
 
     def remove_subscriber(self, email_address: str, product_id: str) -> bool:

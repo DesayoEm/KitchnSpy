@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr, ConfigDict
+from pydantic import BaseModel, Field, EmailStr, ConfigDict, field_validator
 from datetime import datetime, timezone
 
 class SubscriberData(BaseModel):
@@ -18,6 +18,12 @@ class SubscriberData(BaseModel):
             }
         }
     )
+
+    @field_validator('email_address')
+    def validate_price_format(cls, value: str) -> str:
+        """return email address as a lowercase str."""
+
+        return value.lower()
 
 
 class UnSubscribeData(BaseModel):
