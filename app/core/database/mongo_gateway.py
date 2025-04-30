@@ -89,7 +89,7 @@ class MongoGateway:
     #Products
     def compile_product_ids(self) -> list[str]:
         """Compile the ids for all products in a list"""
-        product_ids = [doc["_id"] for doc in self.products.find({}, {"_id": 1})]
+        product_ids = [str(doc["_id"]) for doc in self.products.find({}, {"_id": 1})]
         return product_ids
 
     def insert_product(self, data: dict) -> InsertOneResult:

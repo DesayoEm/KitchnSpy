@@ -29,7 +29,7 @@ async def get_product_subscribers(
     page: int = Query(1, ge=1, description="Page number"),
     per_page: int = Query(20, ge=1, le=100, description="Items per page")
 ):
-    generator = subscription_crud.yield_product_subscribers(product_id, page, per_page)
+    generator = subscription_crud.yield_and_paginate_product_subscribers(product_id, page, per_page)
 
     def stream_json_array():
         yield b"["

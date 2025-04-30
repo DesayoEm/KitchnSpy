@@ -40,9 +40,12 @@ class PriceChangeService:
         product = self.products.find_product(product_id)
 
         for subscriber in subscribers:
+            logger.info(f"Found {len(subscribers)} subscribers for product {product_id}")
+
             self.notification.send_price_change_notification(
-                subscriber['email_address'],  subscriber['name'], product['product_name'],
+                 subscriber['email_address'],  subscriber['name'], product['product_name'],
                 previous_price, new_price, price_diff, change_type, date_checked, product['url']
-            )
+                )
+
 
 

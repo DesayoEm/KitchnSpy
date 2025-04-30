@@ -58,8 +58,12 @@ class SubscriptionCrud:
         subscriber = self.db.find_subscriber_by_email(value)
         return self.serialize_documents(subscriber)
 
+    def yield_product_subscribers(self, product_id: str):
+        """Find all subscribers associated with a given product."""
+        return self.db.yield_product_subscribers(product_id)
 
-    def yield_product_subscribers(self, product_id: str,  page, per_page):
+
+    def yield_and_paginate_product_subscribers(self, product_id: str,  page, per_page):
         """Find all subscribers associated with a given product."""
         return self.db.yield_and_paginate_product_subscribers(product_id, page, per_page)
 
