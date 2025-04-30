@@ -1,6 +1,8 @@
 from app.core.services.notifications.notifications import NotificationService
 from app.crud.products import ProductCrud
 from app.crud.subscription import SubscriptionCrud
+from app.infra.log_service import logger
+
 
 class PriceChangeService:
     def __init__(self):
@@ -33,7 +35,8 @@ class PriceChangeService:
         self, product_id: str, previous_price: float, new_price: float, price_diff: float,
         change_type: str, date_checked: str
             ):
-        subscribers = self.subscribers.yield_product_subscribers(product_id)
+        subscribers = list(self.subscribers.yield_product_subscribers(product_id))
+        logger.info(f"Found {len(subscribers)} subscribers for product {product_id}")
         product = self.products.find_product(product_id)
 
         for subscriber in subscribers:

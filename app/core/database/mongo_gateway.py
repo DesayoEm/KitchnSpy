@@ -87,7 +87,6 @@ class MongoGateway:
 
 
     #Products
-
     def compile_product_ids(self) -> list[str]:
         """Compile the ids for all products in a list"""
         product_ids = [doc["_id"] for doc in self.products.find({}, {"_id": 1})]
@@ -145,6 +144,7 @@ class MongoGateway:
         if not prod:
             raise DocNotFoundError(identifier=url, entity="Product")
         return prod
+
 
     def find_all_products(self, page: int = 1) -> list[dict]:
         """Retrieve all products with pagination."""
@@ -291,14 +291,6 @@ class MongoGateway:
             logger.error(f"Failed to insert price log: {str(e)}")
             raise
 
-    def insert_price_logs(self) -> list[dict]:
-        """Insert the prices for all products."""
-        logged_prices = []
-        product_ids = [doc["_id"] for doc in self.products.find({}, {"_id": 1})]
-        for product_id in product_ids:
-            self.insert_price_logs()
-
-        return #count of inserted stuff
 
     def yield_and_paginate_all_price_logs(self,page: int = 1, per_page: int = 20) -> Generator[Dict, None, None]:
         """Yield serialized price history documents for all products with pagination."""
@@ -390,10 +382,8 @@ class MongoGateway:
     def yield_product_subscribers(self, product_id: str) -> Generator[
         Dict, None, None]:
         """Yield subscriber documents for a product one by one with."""
-        obj_id = self.validate_obj_id(product_id, "Product")
-
         try:
-            cursor = self.subscribers.find({"product_id": obj_id})
+            cursor = self.subscribers.find({"product_id": product_id})
             yield from self.yield_documents(cursor)
 
         except Exception as e:
@@ -412,10 +402,10 @@ class MongoGateway:
         except Exception:
             raise
 
-    def find_product_subscriber(self, email_address: str, product_id: str) -> Cursor[Mapping[str, Any] | Any]:
+    def find_product_subscriber(self, email_address: str, product_id: str) -> dict:
         """Find a single subscriber by email address and product id."""
         try:
-            subscriber = self.subscribers.find({"email_address": email_address, "product_id": product_id})
+            subscriber = self.subscribers.find_one({"email_address": email_address, "product_id": product_id})
             if not subscriber:
                 raise DocNotFoundError(identifier=email_address, entity="Subscriber")
             return subscriber

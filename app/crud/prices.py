@@ -32,7 +32,6 @@ class PricesCrud:
         if documents:
             return [self.util.json_serialize_doc(doc) for doc in documents if doc]
 
-
     def log_price(self, product_id: str) -> dict:
         """Log the current price of a product by scraping it and comparing it to the existing stored price."""
         existing = self.db.find_product(product_id)
@@ -61,7 +60,7 @@ class PricesCrud:
 
             self.db.insert_price_log(data)
 
-            if change["trigger"]:#event
+            if not change["trigger"]:#event
                 date_str = data["date_checked"].strftime('%Y-%m-%d')
                 self.price_service.notify_subscribers(
                     product_id, previous_price, new_price, change["price_diff"], change["change_type"],
@@ -72,7 +71,6 @@ class PricesCrud:
 
         except Exception:
             raise
-
 
     def log_prices(self) -> dict:
         """Log prices for all products and return a summary."""
@@ -110,7 +108,7 @@ class PricesCrud:
 
     def delete_old_price_logs(self) -> int:
         """Delete all price log entries older than 1 year ago."""
-        cutoff_date = datetime.now(timezone.utc) - timedelta(days=365)
+        cutoff_date = datetime.now(timezone.utc) - timedelta(minutes=1)
 
         result = self.db.price_logs.delete_many({
             "date_checked": {"$lt": cutoff_date}

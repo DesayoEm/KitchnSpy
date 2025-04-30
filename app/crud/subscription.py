@@ -22,6 +22,7 @@ class SubscriptionCrud:
         if document:
             return self.util.json_serialize_doc(document)
 
+
     def serialize_documents(self, documents: list[dict]) -> list[dict]:
         """Convert ObjectId to str in a list of documents."""
         if documents:
@@ -41,7 +42,6 @@ class SubscriptionCrud:
         self.db.insert_subscriber(subscriber_info)
         self.send_subscription_email(subscriber_info)
 
-
     def send_subscription_email(self, subscriber_data: dict) -> None:
         """Send a subscription confirmation email to a new subscriber."""
         unsubscribe_link = f"https://kitchnspy.com/subscriptions/{subscriber_data['product_id']}/unsubscribe?email={subscriber_data['email_address']}"
@@ -52,7 +52,6 @@ class SubscriptionCrud:
             product_name=subscriber_data["product_name"],
             unsubscribe_link=unsubscribe_link
         )
-
 
     def find_all_subscribers(self, product_id: str) -> list[dict]:
         """Find all subscribers associated with a given product."""
@@ -69,6 +68,8 @@ class SubscriptionCrud:
         """Remove a subscriber and send them an un-subscription confirmation email."""
 
         subscriber_data = self.db.find_product_subscriber(email_address, product_id)
+        subscriber_data = self.serialize_document(subscriber_data)
+
         if not subscriber_data:
             raise NotSubscribedError(email_address = email_address)
 

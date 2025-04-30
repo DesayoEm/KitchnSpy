@@ -88,14 +88,14 @@ class NotificationService:
                     padding: 20px;
                 }}
                 .header {{
-                    background-color: #bc6c25;
+                    background-color: #5e2945;;
                     color: #fefae0;
                     padding: 20px;
                     text-align: center;
                     border-radius: 12px;
                 }}
                 .content {{
-                    background-color: #fefae0;
+                    background-color: #f1e8ed;
                     padding: 20px;
                     border-radius: 12px;
                     margin-top: 20px;
@@ -156,7 +156,7 @@ class NotificationService:
     ) -> bool:
         """Send a notification email to a subscriber."""
 
-        change_dir = "less" if change_type == "Drop" else "more"
+        change_dir = "Less" if change_type == "Drop" else "more"
 
         subject = f"Price {change_type} Update for {product_name}"
 
@@ -167,7 +167,7 @@ class NotificationService:
                 body {{
                     font-family: Arial, sans-serif;
                     background-color: #ffffff;
-                    color: #283618;
+                    color: #000000;
                     line-height: 1.6;
                     margin: 0;
                     padding: 0;
@@ -178,30 +178,31 @@ class NotificationService:
                     padding: 20px;
                 }}
                 .header {{
-                    background-color: #606c38;
-                    color: #fefae0;
-                    padding: 20px;
+                    background-color: #893959;
+                    color: #000000;
+                    padding: 12px;
                     text-align: center;
                     border-radius: 12px;
                 }}
                 .content {{
                     padding: 20px;
-                    background-color: #fefae0;
+                    background-color: #fdeef0;
                     border-radius: 12px;
                     margin-top: 20px;
                     color: #283618;
                 }}
                 .price {{
-                    background-color: #dda15e;
+                    background-color: #dfebae;
                     padding: 10px;
                     border-radius: 8px;
                     display: inline-block;
                     margin: 10px 0;
                     font-weight: bold;
-                    color: #283618;
+                    font-size: 0.9em;
+                    color: #000000;
                 }}
                 .button {{
-                    background-color: #bc6c25;
+                    background-color: #893959;
                     color: white;
                     padding: 10px 20px;
                     text-decoration: none;
@@ -220,7 +221,7 @@ class NotificationService:
         <body>
             <div class="container">
                 <div class="header">
-                    <h2>Heads up, {name} 👋</h2>
+                    <h2>Heads up, {name.title()}! 👋</h2>
                     <p>Your watched item has a new price!</p>
                 </div>
                 <div class="content">
@@ -231,11 +232,10 @@ class NotificationService:
 
                     <p><small>(as of {date_checked})</small></p>
                     <p>If this one's been sitting on your wishlist, now might be your moment.</p>
-                    <a href="{product_link}" class="button">Check it out</a>
+                    <a href="{product_link}" style="color: #000000;" class="button">Check it out</a>
                 </div>
                 <div class="footer">
-                    I’ll let you know if anything else changes.  
-                    <p>Desayo.</p>
+                    We’ll let you know if anything else changes.  
                 </div>
             </div>
         </body>
@@ -243,7 +243,7 @@ class NotificationService:
         """
 
         text_body = f"""
-    Hey {name},
+    Hey {name.title()},
 
     Quick heads-up: the price on '{product_name}' just changed.
 
@@ -260,7 +260,6 @@ class NotificationService:
     """
 
         return self.email_service.send_email(to_email, subject, html_body, text_body)
-
 
 
     def send_product_removed_notification(
