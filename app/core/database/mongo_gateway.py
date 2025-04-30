@@ -87,6 +87,12 @@ class MongoGateway:
 
 
     #Products
+
+    def compile_product_ids(self) -> list[str]:
+        """Compile the ids for all products in a list"""
+        product_ids = [doc["_id"] for doc in self.products.find({}, {"_id": 1})]
+        return product_ids
+
     def insert_product(self, data: dict) -> InsertOneResult:
         """Insert a single product document into the database."""
         try:
@@ -139,8 +145,6 @@ class MongoGateway:
         if not prod:
             raise DocNotFoundError(identifier=url, entity="Product")
         return prod
-
-
 
     def find_all_products(self, page: int = 1) -> list[dict]:
         """Retrieve all products with pagination."""
@@ -286,6 +290,15 @@ class MongoGateway:
         except Exception as e:
             logger.error(f"Failed to insert price log: {str(e)}")
             raise
+
+    def insert_price_logs(self) -> list[dict]:
+        """Insert the prices for all products."""
+        logged_prices = []
+        product_ids = [doc["_id"] for doc in self.products.find({}, {"_id": 1})]
+        for product_id in product_ids:
+            self.insert_price_logs()
+
+        return #count of inserted stuff
 
     def yield_and_paginate_all_price_logs(self,page: int = 1, per_page: int = 20) -> Generator[Dict, None, None]:
         """Yield serialized price history documents for all products with pagination."""

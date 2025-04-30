@@ -11,8 +11,9 @@ prices_crud = PricesCrud()
 
 
 @router.post("/batch")
-async def log_prices(data: dict):
-    return prices_crud.log_prices(data)
+async def log_prices():
+    return prices_crud.log_prices()
+
 
 @router.post("/")
 async def log_price(product_id: str):
@@ -46,7 +47,22 @@ async def get_price_history(
 async def get_all_prices(page: int = Query(1, ge=1, description="Page number"),
                          per_page: int = Query(20, ge=1, le=100, description="Items per page")
 ):
-    return prices_crud.yield_all_prices(page, per_page)
+    generator = prices_crud.yield_all_prices(page, per_page)
+
+    def stream_json_array():
+        yield b"["
+        first = True
+
+        for document in generator:
+            if not first:
+                yield b","
+            else:
+                first = False
+            yield json.dumps(document).encode()
+
+        yield b"]"
+
+    return StreamingResponse(stream_json_array(), media_type="application/json")
 
 
 @router.delete("/{price_id}")

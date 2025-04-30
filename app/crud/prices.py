@@ -74,24 +74,31 @@ class PricesCrud:
             raise
 
 
-    def log_prices(self, products: list[dict]) -> list[dict]:
-        """Log the prices for a list of products."""
-        logged_prices = []
-        for product in products:
-            logged_price = self.log_price(product['_id'])
-            logged_prices.append(self.serialize_document(logged_price))
+    def log_prices(self) -> dict:
+        """Log prices for all products and return a summary."""
+        updated_count = 0
+        error_count = 0
 
-        return logged_prices
+        product_ids = self.db.compile_product_ids()
 
+        for product_id in product_ids:
+            try:
+                self.log_price(product_id)
+                updated_count += 1
+            except Exception as e:
+                logger.error(f"Failed to log price for product {product_id}: {str(e)}")
+                error_count += 1
 
-    def find_all_prices(self) -> list[dict]:
-        """Retrieve all price logs across all products."""
-        prices = self.db.find_all_price_logs()
-        return self.serialize_documents(prices)
+        return {
+            "total_products": len(product_ids),
+            "updated": updated_count,
+            "errors": error_count
+        }
+
 
     def yield_all_prices(self, page: int, per_page: int) -> Iterator[dict]:
         """Yield all price logs across all products."""
-        return self.db.yield_and_paginate_product_price_history(page, per_page)
+        return self.db.yield_and_paginate_all_price_logs(page, per_page)
 
     def yield_product_price_history(self, product_id: str, page: int, per_page: int) -> Iterator[dict]:
         """Yield the price history for a specific product one by one."""
