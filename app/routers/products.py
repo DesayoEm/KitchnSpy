@@ -1,9 +1,9 @@
 from fastapi import APIRouter
-from app.core.database.validation.product import ProductCreate, ProductsCreateBatch, ProductsUpdateBatch
-from app.crud.products import ProductCrud
+from app.domain.products.schema import ProductCreate, ProductsCreateBatch, ProductsUpdateBatch
+from app.domain.products.services.product_service import ProductService
 
 router = APIRouter()
-products_crud = ProductCrud()
+products_crud = ProductService()
 
 @router.post("/")
 async def add_product(data: ProductCreate):

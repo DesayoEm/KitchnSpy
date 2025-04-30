@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 from typing import Dict, Any, List
 from requests.exceptions import RequestException
-from app.core.exceptions import FailedRequestError, ParsingError
+from app.shared.exceptions import FailedRequestError, ParsingError
 from app.infra.log_service import logger
 
 

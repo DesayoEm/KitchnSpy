@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Query
-from app.crud.subscription import SubscriptionCrud
-from app.core.database.validation.subscription import SubscriberData
+from app.domain.subscribers.services.subscription_service import SubscriptionService
+from app.domain.subscribers.schemas import SubscriberData
 from fastapi.responses import StreamingResponse
 import json
 
 
 router = APIRouter()
-subscription_crud = SubscriptionCrud()
+subscription_crud = SubscriptionService()
 
 @router.post("/products/{product_id}/subscribe")
 async def subscribe(product_id: str, data: SubscriberData):

@@ -1,40 +1,32 @@
 from datetime import datetime, timezone, timedelta
 from bson import ObjectId
-from app.core.database.mongo_gateway import MongoGateway
-from app.core.exceptions import URLNotFoundError
-from app.core.services.price_change import PriceChangeService
-from app.core.services.scraper import Scraper
-from app.crud.products import ProductCrud
-from app.core.utils import Utils
+from app.infra.db.adapters.price_log_adapter import PriceLogAdapter
+from app.shared.exceptions import URLNotFoundError
+from app.domain.price_logs.services.price_change import PriceChangeService
+from app.infra.scraping.kitchenaid_scraper import Scraper
+from app.domain.products.services.product_service import ProductService
+from app.domain.price_logs.utils import PriceUtils
 from typing import Iterator
-
 from app.infra.log_service import logger
+from app.shared.serializer import Serializer
 
 
-class PricesCrud:
+class PriceLogService:
     def __init__(self):
         """
-        Initialize the PricesCrud with database access, product CRUD operations, and scraper service.
+        Initialize PriceLogService with database access, product CRUD operations, and scraper service.
         """
-        self.db = MongoGateway()
-        self.products = ProductCrud()
+        self.db = PriceLogAdapter()
+        self.products = ProductService()
         self.scraper = Scraper()
-        self.util = Utils()
+        self.util = PriceUtils()
+        self.serializer = Serializer()
         self.price_service = PriceChangeService()
 
-    def serialize_document(self, document: dict | None) -> dict | None:
-        """Convert ObjectId to str in a single document."""
-        if document:
-            return self.util.json_serialize_doc(document)
-
-    def serialize_documents(self, documents: list[dict]) -> list[dict]:
-        """Convert ObjectId to str in a list of documents."""
-        if documents:
-            return [self.util.json_serialize_doc(doc) for doc in documents if doc]
 
     def log_price(self, product_id: str) -> dict:
         """Log the current price of a product by scraping it and comparing it to the existing stored price."""
-        existing = self.db.find_product(product_id)
+        existing = self.products.find_product(product_id)
         new= self.scraper.scrape_product({
                     "name": existing["name"],
                     "url": existing["url"]
@@ -67,7 +59,7 @@ class PricesCrud:
                     date_str
                 )
 
-            return self.serialize_document(data)
+            return self.serializer.json_serialize_doc(data)
 
         except Exception:
             raise
@@ -77,7 +69,7 @@ class PricesCrud:
         updated_count = 0
         error_count = 0
 
-        product_ids = self.db.compile_product_ids()
+        product_ids = self.products.compile_product_ids()
 
         for product_id in product_ids:
             try:
@@ -94,13 +86,17 @@ class PricesCrud:
         }
 
 
-    def yield_all_prices(self, page: int, per_page: int) -> Iterator[dict]:
-        """Yield all price logs across all products."""
-        return self.db.yield_and_paginate_all_price_logs(page, per_page)
+    def yield_product_price_history(self, product_id: str) -> Iterator[dict]:
+        """Yield the price history for a specific product one by one."""
+        return self.db.yield_product_price_history(product_id)
 
-    def yield_product_price_history(self, product_id: str, page: int, per_page: int) -> Iterator[dict]:
+    def yield_and_paginate_product_price_history(self, product_id: str, page: int, per_page: int) -> Iterator[dict]:
         """Yield the price history for a specific product one by one."""
         return self.db.yield_and_paginate_product_price_history(product_id, page, per_page)
+
+    def yield_and_paginate_all_prices(self, page: int, per_page: int) -> Iterator[dict]:
+        """Yield all price logs across all products."""
+        return self.db.yield_and_paginate_all_price_logs(page, per_page)
 
     def delete_price(self, price_id: str) -> None:
         """Delete a price log entry by its ID."""

@@ -1,5 +1,4 @@
-from app.core.services.notifications.email import EmailService
-
+from app.infra.email.email_config import EmailService
 
 class NotificationService:
     def __init__(self):

@@ -1,21 +1,20 @@
-from app.core.database.mongo_gateway import MongoGateway
-from app.core.exceptions import NotSubscribedError
-from app.core.services.notifications.notifications import NotificationService
-from app.core.utils import Utils
-from app.crud.products import ProductCrud
-from app.core.database.validation.subscription import SubscriberData
-from typing import Generator
+from app.infra.db.adapters.subscriber_adapter import SubscriberAdapter
+from app.shared.exceptions import NotSubscribedError
+from app.domain.subscribers.services.notification_service import NotificationService
+from app.shared.serializer import Serializer
+from app.domain.products.services.product_service import ProductService
+from app.domain.subscribers.schemas import SubscriberData
 
 
-class SubscriptionCrud:
+class SubscriptionService:
     def __init__(self):
         """
         Initialize SubscriptionCrud with database access, product management, and notification services.
         """
-        self.db = MongoGateway()
-        self.products = ProductCrud()
+        self.db = SubscriberAdapter()
+        self.products = ProductService()
         self.notifier = NotificationService()
-        self.util = Utils()
+        self.util = Serializer()
 
     def serialize_document(self, document: dict | None) -> dict | None:
         """Convert ObjectId to str in a single document."""

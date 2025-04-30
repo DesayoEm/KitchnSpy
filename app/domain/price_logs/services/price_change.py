@@ -1,14 +1,14 @@
-from app.core.services.notifications.notifications import NotificationService
-from app.crud.products import ProductCrud
-from app.crud.subscription import SubscriptionCrud
+from app.domain.subscribers.services.notification_service import NotificationService
+from app.domain.products.services.product_service import ProductService
+from app.domain.subscribers.services.subscription_service import SubscriptionService
 from app.infra.log_service import logger
 
 
 class PriceChangeService:
     def __init__(self):
-        self.subscribers = SubscriptionCrud()
+        self.subscribers = SubscriptionService()
         self.notification = NotificationService()
-        self.products = ProductCrud()
+        self.products = ProductService()
 
     @staticmethod
     def detect_change(previous_price: float, new_price: float):

@@ -1,7 +1,7 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from app.core.exceptions import EmailFailedError
+from app.shared.exceptions import EmailFailedError
 from app.infra.config import email_settings
 
 class EmailService:
