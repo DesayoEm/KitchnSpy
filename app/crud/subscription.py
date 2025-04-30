@@ -20,12 +20,12 @@ class SubscriptionCrud:
     def serialize_document(self, document: dict | None) -> dict | None:
         """Convert ObjectId to str in a single document."""
         if document:
-            return self.util.convert_objectid_to_str(document)
+            return self.util.json_serialize_doc(document)
 
     def serialize_documents(self, documents: list[dict]) -> list[dict]:
         """Convert ObjectId to str in a list of documents."""
         if documents:
-            return [self.util.convert_objectid_to_str(doc) for doc in documents if doc]
+            return [self.util.json_serialize_doc(doc) for doc in documents if doc]
 
 
     def add_subscriber(self, product_id: str, data: SubscriberData) -> None:

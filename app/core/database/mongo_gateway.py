@@ -77,7 +77,7 @@ class MongoGateway:
     def yield_documents(self, cursor)-> Generator[Dict, None, None]:
         """Yield serialized documents one by one."""
         for document in cursor:
-            yield self.util.convert_objectid_to_str(document)
+            yield self.util.json_serialize_doc(document)
 
     @staticmethod
     def paginate_results(cursor, page: int = 1, per_page: int = 10)-> List[Dict]:
@@ -287,17 +287,18 @@ class MongoGateway:
             logger.error(f"Failed to insert price log: {str(e)}")
             raise
 
-
-    def yield_product_price_history(self, product_id: str) -> Generator[Dict, None, None]:
-        """Yield serialized price history documents for a product one by one with pagination."""
-
-        obj_id = self.validate_obj_id(product_id, "Product")
+    def yield_and_paginate_all_price_logs(self,page: int = 1, per_page: int = 20) -> Generator[Dict, None, None]:
+        """Yield serialized price history documents for all products with pagination."""
         try:
-            cursor = self.price_logs.find({"product_id": obj_id})
-            return self.yield_documents(cursor)
+            skip = (page - 1) * per_page if page > 0 else 0
+            cursor = self.price_logs.find({}) \
+                .sort("date_checked", pymongo.ASCENDING) \
+                .skip(skip).limit(per_page)
+
+            yield from self.yield_documents(cursor)
 
         except Exception as e:
-            logger.error(f"Error yielding price history for product {product_id}: {str(e)}")
+            logger.error(f"Error yielding price history for products {str(e)}")
             raise
 
 
@@ -305,12 +306,10 @@ class MongoGateway:
             self, product_id: str, page: int = 1, per_page: int = 20
         ) -> Generator[Dict, None, None]:
 
-        """Yield serialized price history documents for a product one by one with pagination."""
-        obj_id = self.validate_obj_id(product_id, "Product")
-
+        """Yield serialized price history documents for a product with pagination."""
         try:
             skip = (page - 1) * per_page if page > 0 else 0
-            cursor = self.price_logs.find({"product_id": obj_id}) \
+            cursor = self.price_logs.find({"product_id":product_id}) \
                 .sort("date_checked", pymongo.ASCENDING) \
                 .skip(skip).limit(per_page)
 
@@ -318,20 +317,6 @@ class MongoGateway:
 
         except Exception as e:
             logger.error(f"Error yielding price history for product {product_id}: {str(e)}")
-            raise
-
-
-    def find_all_price_logs(self, page: int = 1, per_page: int = 20) -> list[dict]:
-        """Retrieve all price logs with pagination, sorted by date checked."""
-        try:
-            cursor = self.price_logs.find({}).sort("date_checked", pymongo.ASCENDING)
-            prices = self.paginate_results(cursor, page, per_page)
-            if not prices:
-                raise DocsNotFoundError(entities="Prices", page=page)
-            return prices
-
-        except Exception as e:
-            logger.error(f"Error retrieving price logs: {str(e)}")
             raise
 
 

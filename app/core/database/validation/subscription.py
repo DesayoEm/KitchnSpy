@@ -19,6 +19,7 @@ class SubscriberData(BaseModel):
         }
     )
 
+
 class UnSubscribeData(BaseModel):
         """Schema for subscriber data associated with a product."""
         name: str

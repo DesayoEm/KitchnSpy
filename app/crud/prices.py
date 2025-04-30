@@ -25,12 +25,12 @@ class PricesCrud:
     def serialize_document(self, document: dict | None) -> dict | None:
         """Convert ObjectId to str in a single document."""
         if document:
-            return self.util.convert_objectid_to_str(document)
+            return self.util.json_serialize_doc(document)
 
     def serialize_documents(self, documents: list[dict]) -> list[dict]:
         """Convert ObjectId to str in a list of documents."""
         if documents:
-            return [self.util.convert_objectid_to_str(doc) for doc in documents if doc]
+            return [self.util.json_serialize_doc(doc) for doc in documents if doc]
 
 
     def log_price(self, product_id: str) -> dict:
@@ -89,15 +89,13 @@ class PricesCrud:
         prices = self.db.find_all_price_logs()
         return self.serialize_documents(prices)
 
-    def get_price_history(self, product_id: str) -> list[dict]:
-        """Retrieve the price history for a specific product."""
-        price_history = self.db.yield_and_paginate_product_price_history(product_id)
-        return self.serialize_documents(list(price_history))
+    def yield_all_prices(self, page: int, per_page: int) -> Iterator[dict]:
+        """Yield all price logs across all products."""
+        return self.db.yield_and_paginate_product_price_history(page, per_page)
 
-
-    def yield_product_price_history(self, product_id: str) -> Iterator[dict]:
+    def yield_product_price_history(self, product_id: str, page: int, per_page: int) -> Iterator[dict]:
         """Yield the price history for a specific product one by one."""
-        return self.db.yield_product_price_history(product_id)
+        return self.db.yield_and_paginate_product_price_history(product_id, page, per_page)
 
     def delete_price(self, price_id: str) -> None:
         """Delete a price log entry by its ID."""

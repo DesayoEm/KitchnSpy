@@ -23,20 +23,22 @@ class NotificationService:
             <style>
                 body {{ font-family: Arial, sans-serif; background-color: #ffffff; color: #283618; line-height: 1.6; }}
                 .container {{ max-width: 600px; margin: auto; padding: 20px; }}
-                .header {{ background-color: #606c38; color: #fefae0; padding: 20px; border-radius: 12px; text-align: center; }}
-                .content {{ background-color: #fefae0; padding: 20px; border-radius: 12px; margin-top: 20px; }}
+                .header {{ background-color: #5e2945; color: #000000; padding: 8px; border-radius: 12px; text-align: center; }}
+                .content {{ background-color: #f1e8ed; padding: 20px; border-radius: 12px; margin-top: 20px; }}
                 .footer {{ font-size: 12px; color: #666; text-align: center; margin-top: 30px; }}
             </style>
         </head>
         <body>
             <div class="container">
                 <div class="header">
-                    <h2>Nice one, {name}!</h2>
+                    <h2>Nice one, {name.title()}!</h2>
                 </div>
                 <div class="content">
-                    <p>You're all set — I'm keeping an eye on <strong>{product_name}</strong> for you.</p>
+                    <p>You're all set. We're keeping an eye on <strong>{product_name}</strong> for you.</p>
                     <p>Whenever the price changes, we’ll let you know. Until then, just sit back and relax. </p>
+                    </br></br>
                     <p style="font-size: 0.9em;"><a href="{unsubscribe_link}">Unsubscribe</a> if you ever change your mind.</p>
+        
                 </div>
                 <div class="footer">
                      Just updates when things actually change.
@@ -47,9 +49,9 @@ class NotificationService:
         """
 
         text_body = f"""
-        Hey {name},
+        Hey {name.title()},
 
-        You're in! I'll keep an eye on {product_name} for you.
+        You're in! We'll keep an eye on {product_name} for you.
 
         Whenever the price changes, you'll be the first to know.
         If you ever want to unsubscribe, use this link: {unsubscribe_link}
