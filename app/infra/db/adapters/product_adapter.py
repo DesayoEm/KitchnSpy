@@ -118,6 +118,7 @@ class ProductAdapter(BaseAdapter):
             ReplaceOne(op["filter"], op["replacement"])
             for op in operations
         ]
+
         result = self.products.bulk_write(mongo_ops, ordered=False)
         logger.info(f"Bulk updated {result.modified_count} products")
         return result.modified_count

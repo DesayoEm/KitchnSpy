@@ -122,25 +122,23 @@ class ProductService:
         from app.domain.subscribers.services.subscription_service import SubscriptionService
         subscription_crud = SubscriptionService()
 
-        from app.domain.price_logs.services.price_log_service import PriceLogService
-        price_service = PriceLogService()
-
-        price_history = price_service.yield_product_price_history(product_id)
-        for price in price_history:
-            price_id = price["_id"]
-            price_service.delete_price(price_id)
+        obj_id = self.db.validate_obj_id(product_id, "Product")
+        self.db.price_logs.delete_many({"product_id": obj_id})
+        logger.info(f"Deleted price logs for product {product_id}")
 
         subscribers = subscription_crud.yield_product_subscribers(product_id)
         for subscriber in subscribers:
-            email = subscriber['email_address']
-            name = subscriber['name']
-            product_name = subscriber['product_name']
+            try:
+                email = subscriber['email_address']
+                name = subscriber['name']
+                product_name = subscriber['product_name']
 
-            self.notification_service.send_product_removed_notification(
-                to_email=email, name=name, product_name=product_name
-            )
+                self.notification_service.send_product_removed_notification(
+                    to_email=email, name=name, product_name=product_name
+                )
 
-            subscriber_id = subscriber["_id"]
-            subscription_crud.delete_subscriber(subscriber_id)
+                subscription_crud.delete_subscriber(subscriber["_id"])
+            except Exception as e:
+                logger.error(f"Failed to notify or delete subscriber {subscriber['_id']}: {str(e)}")
 
         self.db.delete_product(product_id)
