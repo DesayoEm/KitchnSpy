@@ -5,10 +5,11 @@ load_dotenv()
 
 class ProductAdapter(BaseAdapter):
 
-    def compile_product_ids(self) -> list[str]:
+    def compile_product_ids(self) -> List[str]:
         """ Retrieve all product IDs from the database."""
         product_ids = [str(doc["_id"]) for doc in self.products.find({}, {"_id": 1})]
         return product_ids
+
 
     def insert_product(self, data: dict) -> InsertOneResult:
         """Insert a single product document into the database."""
@@ -25,33 +26,6 @@ class ProductAdapter(BaseAdapter):
             raise
 
 
-    def insert_or_update_products(self, products: list[dict]) -> dict:
-        """Perform a bulk upsert operation on product documents using their URLs."""
-        operations =[]
-        for product  in products:
-            operations.append(
-                UpdateOne(
-                    {"url": product["url"]},
-                    {"$set": product},
-                    upsert = True
-                )
-            )
-        try:
-            result = self.products.bulk_write(operations, ordered=False)
-            logger.info(f"Inserted: {result.upserted_count}, Updated: {result.modified_count}")
-            return {
-                "inserted_count": result.upserted_count,
-                "updated_count": result.modified_count
-            }
-
-        except BulkWriteError as e:
-            logger.error(f"Bulk operation failed: {str(e.details)}")
-            raise
-        except Exception as e:
-            logger.error(f"Failed bulk insert/update: {str(e)}")
-            raise
-
-
     def find_product(self, product_id: str) -> dict:
         """Retrieve a product document by its ID."""
         return self.find_by_id(self.products, product_id, "Product")
@@ -65,7 +39,7 @@ class ProductAdapter(BaseAdapter):
         return prod
 
 
-    def find_all_products(self, page: int = 1) -> list[dict]:
+    def find_products_paginated(self, page: int = 1) -> List[dict]:
         """Retrieve all products with pagination."""
 
         try:
@@ -100,32 +74,14 @@ class ProductAdapter(BaseAdapter):
             skip = (page - 1) * per_page if page > 0 else 0
             cursor = cursor.skip(skip).limit(per_page)
 
-            results = list(cursor)
-            if not results:
+            first_doc = next(cursor, None)
+            if not first_doc:
                 raise DocsNotFoundError(entities="Products", page=page)
 
-            yield from self.yield_documents(results)
+            yield from self.yield_documents(itertools.chain([first_doc], cursor))
 
         except Exception as e:
             logger.error(f"Error searching products: {str(e)}")
-            raise
-
-
-    def update_product(self, product_id: str, new_document: dict) -> dict:
-        """ Replace an existing product document by ID with updated fields."""
-        obj_id = self.validate_obj_id(product_id, "Product")
-        try:
-            if not self.products.find_one({"_id": obj_id}):
-                raise DocNotFoundError(identifier=product_id, entity="Product")
-
-            self.products.replace_one({"_id": obj_id}, new_document)
-            logger.info(f"Updated product {product_id}")
-            updated_document = self.find_product(product_id)
-            return updated_document
-
-        except Exception as e:
-            if not isinstance(e, DocNotFoundError):
-                logger.error(f"Error replacing product {product_id}: {str(e)}")
             raise
 
 
@@ -138,8 +94,10 @@ class ProductAdapter(BaseAdapter):
                 raise DocNotFoundError(identifier=product_id, entity="Product")
 
             result = self.products.replace_one({"_id": obj_id}, new_document)
+
             if result.modified_count == 0:
                 logger.info(f"No changes made when updating product {product_id}")
+
             logger.info(f"Replaced product {product_id}")
 
             replaced_document = self.find_product(product_id)
@@ -150,36 +108,19 @@ class ProductAdapter(BaseAdapter):
                 logger.error(f"Error replacing product {product_id}: {str(e)}")
             raise
 
-    def update_product_with_url(self, url: str, new_document: dict) -> UpdateOne:
-        """Return an UpdateOne operation for updating a product by URL (used in batch updates)."""
-        try:
-            if not self.products.find_one({"url": url}):
-                raise DocNotFoundError(identifier=url, entity="Product")
 
-            return pymongo.UpdateOne(
-                {"url": url},
-                {"$set": new_document}
-            )
-        except Exception as e:
-            if not isinstance(e, DocNotFoundError):
-                logger.error(f"Error replacing product {url}: {str(e)}")
-            raise
+    def bulk_replace_products(self, operations: list[dict]) -> int:
+        """Perform a bulk upsert operation on product documents"""
+        if not operations:
+            return 0
 
-
-    def replace_product_with_url(self, url: str, new_document: dict) -> ReplaceOne:
-        """Return a ReplaceOne operation to fully replace a product document by URL.."""
-        try:
-            if not self.products.find_one({"url": url}):
-                raise DocNotFoundError(identifier=url, entity="Product")
-
-            return pymongo.ReplaceOne(
-                        {"url": url},
-                        {"$set": new_document}
-                    )
-        except Exception as e:
-            if not isinstance(e, DocNotFoundError):
-                logger.error(f"Error replacing product {url}: {str(e)}")
-            raise
+        mongo_ops = [
+            ReplaceOne(op["filter"], op["replacement"])
+            for op in operations
+        ]
+        result = self.products.bulk_write(mongo_ops, ordered=False)
+        logger.info(f"Bulk updated {result.modified_count} products")
+        return result.modified_count
 
 
     def delete_product(self, product_id: str) -> None:

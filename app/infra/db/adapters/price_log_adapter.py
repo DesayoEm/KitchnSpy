@@ -50,7 +50,6 @@ class PriceLogAdapter(BaseAdapter):
             raise
 
 
-
     def yield_and_paginate_all_price_logs(
         self, page: int = 1, per_page: int = 20
     ) -> Generator[Dict, None, None]:
@@ -74,16 +73,14 @@ class PriceLogAdapter(BaseAdapter):
             raise
 
 
-
-
     def delete_price(self, price_id: str) -> None:
         """Delete a price log document by its ID"""
         obj_id = self.validate_obj_id(price_id, "Price log")
 
         try:
             result = self.price_logs.delete_one({"_id": obj_id})
-            deleted = result.deleted_count > 0
-            if deleted:
+
+            if result.deleted_count > 0:
                 logger.info(f"Deleted price log {price_id}")
             else:
                 raise DocNotFoundError(identifier=price_id, entity="Price")

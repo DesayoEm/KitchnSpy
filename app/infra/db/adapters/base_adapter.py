@@ -28,19 +28,26 @@ class BaseAdapter:
             logger.error(f"Failed to connect to MongoDB: {str(e)}")
             raise
 
+
     def ensure_indexes(self) -> None:
         """Create indexes on collections"""
-        self.products.create_index([("product_name", pymongo.ASCENDING)])
-        self.products.create_index("url", unique=True)
+        self.products.create_index("product_name", pymongo.ASCENDING)
+
+        self.products.create_index(
+            [("url", pymongo.ASCENDING)],
+            unique=True
+        )
+
         self.price_logs.create_index([
             ("product_id", pymongo.ASCENDING),
             ("date_checked", pymongo.ASCENDING)
         ])
-        self.subscribers.create_index([("product_id", pymongo.ASCENDING)])
+
         self.subscribers.create_index([
             ("email_address", pymongo.ASCENDING),
             ("product_id", pymongo.ASCENDING)
         ], unique=True)
+
 
     @staticmethod
     def validate_obj_id(id_str: str, entity_name: str = "Document") -> ObjectId:
@@ -59,6 +66,7 @@ class BaseAdapter:
             raise DocNotFoundError(identifier=doc_id, entity=entity_name)
 
         return document
+
 
     def yield_documents(self, cursor) -> Generator[Dict, None, None]:
         """Yield documents from a MongoDB cursor one at a time, serialized as dictionaries"""

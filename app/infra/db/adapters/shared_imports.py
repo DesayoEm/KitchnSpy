@@ -1,5 +1,5 @@
 import os
-
+import itertools
 import pymongo
 import re
 from dotenv import load_dotenv
