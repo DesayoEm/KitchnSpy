@@ -3,7 +3,9 @@ from dotenv import load_dotenv
 from pydantic import EmailStr
 load_dotenv()
 
-class EmailSettings(BaseSettings):
+class Settings(BaseSettings):
+    DB_URI: str
+    REDIS_URL:str
     MAIL_USERNAME: str
     MAIL_PASSWORD: str
     MAIL_FROM: EmailStr
@@ -16,6 +18,6 @@ class EmailSettings(BaseSettings):
 
     class Config:
         env_file = ".env"
-        env_prefix = "EMAIL_"
 
-email_settings = EmailSettings()
+
+settings = Settings()

@@ -1,6 +1,6 @@
-from app.infra.email.email_config import EmailService
+from app.domain.subscribers.services.notification_service.email_config import EmailService
 
-class NotificationService:
+class EmailNotificationService:
     def __init__(self):
         self.email_service = EmailService()
 

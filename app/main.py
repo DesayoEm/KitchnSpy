@@ -6,7 +6,7 @@ env_path = current_dir / ".env"
 load_dotenv(dotenv_path=env_path)
 from app.infra.log_service import logger
 from app.infra.middleware import ExceptionMiddleware
-from app.routers import products, prices, subscription
+from app.api import products, prices, subscription
 
 
 version = "v1"

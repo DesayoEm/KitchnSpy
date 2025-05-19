@@ -86,4 +86,8 @@ class EmailFailedError(KitchnSpyExceptions):
         self.display = "An unexpected error occurred"
         self.log = f"Email failed to send. DETAIL: {detail}"
 
-
+class NotificationTypeError(KitchnSpyExceptions):
+    def __init__(self, notification_type:str):
+        super().__init__()
+        self.display = f"Unknown notification type: {notification_type}"
+        self.log = f"Unknown notification type entered: {notification_type}"

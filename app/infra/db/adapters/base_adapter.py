@@ -31,7 +31,7 @@ class BaseAdapter:
 
     def ensure_indexes(self) -> None:
         """Create indexes on collections"""
-        self.products.create_index("product_name", pymongo.ASCENDING)
+        self.products.create_index([("product_name", pymongo.ASCENDING)])
 
         self.products.create_index(
             [("url", pymongo.ASCENDING)],

@@ -1,6 +1,6 @@
+from app.domain.subscribers.services.notification_service.email_notifications import EmailNotificationService
 from app.infra.db.adapters.subscriber_adapter import SubscriberAdapter
 from app.shared.exceptions import NotSubscribedError
-from app.domain.subscribers.services.notification_service import NotificationService
 from app.shared.serializer import Serializer
 from app.domain.products.services.product_service import ProductService
 from app.domain.subscribers.schemas import SubscriberData
@@ -13,7 +13,7 @@ class SubscriptionService:
         """
         self.db = SubscriberAdapter()
         self.products = ProductService()
-        self.notifier = NotificationService()
+        self.notifier = EmailNotificationService()
         self.util = Serializer()
 
     def serialize_document(self, document: dict | None) -> dict | None:
