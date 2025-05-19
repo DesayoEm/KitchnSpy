@@ -3,7 +3,9 @@ __pycache__/
 venv/
 .env/
 .venv/
-
+src/
+src
+.src/
 
 docs/
 logs/
