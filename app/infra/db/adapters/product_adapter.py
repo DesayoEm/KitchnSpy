@@ -1,7 +1,6 @@
 from app.infra.db.adapters.shared_imports import *
 from app.infra.db.adapters.base_adapter import BaseAdapter
 
-load_dotenv()
 
 class ProductAdapter(BaseAdapter):
 
