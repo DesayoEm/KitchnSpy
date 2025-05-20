@@ -102,16 +102,17 @@ class PriceLogService:
         """Delete a price log entry by its ID."""
         self.db.delete_price(price_id)
 
-    def delete_old_price_logs(self) -> int:
+    def delete_old_price_logs(self) -> str:
         """Delete all price log entries older than 1 year ago."""
         cutoff_date = datetime.now(timezone.utc) - timedelta(minutes=1)
+        # cutoff_date = datetime.now(timezone.utc) - timedelta(days=365)
 
         result = self.db.price_logs.delete_many({
             "date_checked": {"$lt": cutoff_date}
         })
         deleted_count = result.deleted_count
         logger.info(f"{deleted_count} price logs deleted")
-        return deleted_count
+        return f"Deleted {deleted_count} prices"
 
 
 

@@ -12,8 +12,8 @@ def get_failed_tasks():
     return task_adapter.find_failed_tasks()
 
 @router.get("/tasks/recent")
-def get_recent_tasks():
-    return task_adapter.find_recent_tasks()
+def get_tasks(start_date, end_date, status):
+    return task_adapter.find_tasks(start_date, end_date, status)
 
 @router.get("/tasks/{task_id}")
 def get_task_status(task_id: str):

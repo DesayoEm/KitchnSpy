@@ -24,7 +24,7 @@ class TaskAdapter(BaseAdapter):
                 raise
 
 
-    def find_recent_tasks(self, page:int = 1)-> List[dict]:
+    def find_tasks(self, page: int = 1) -> List[dict]:
         try:
             cursor = self.tasks.find({}).sort("date_done", pymongo.ASCENDING)
             recent_tasks = self.paginate_results(cursor, page, 10)
@@ -37,6 +37,22 @@ class TaskAdapter(BaseAdapter):
             if not isinstance(e, DocsNotFoundError):
                 logger.error(f"Error retrieving recent tasks: {str(e)}")
                 raise
+
+
+    def filter_tasks(self, query, page:int = 1)-> List[dict]:
+        try:
+            cursor = self.tasks.find(query).sort("date_done", pymongo.ASCENDING)
+            recent_tasks = self.paginate_results(cursor, page, 10)
+
+            if not recent_tasks:
+                raise DocsNotFoundError(entities="tasks", page=page)
+            return recent_tasks
+
+        except Exception as e:
+            if not isinstance(e, DocsNotFoundError):
+                logger.error(f"Error retrieving recent tasks: {str(e)}")
+                raise
+
     
     def delete_task(self, task_id: str) -> None:
         """ Delete a task document from the database by its ID."""

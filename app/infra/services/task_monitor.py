@@ -1,31 +1,66 @@
 from datetime import datetime, timezone, timedelta
-from bson import ObjectId
+from typing import List
+
 from app.infra.db.adapters.task_adapter import TaskAdapter
-from typing import Iterator
 from app.infra.log_service import logger
+from app.infra.services.enums import TaskStatus
 from app.shared.serializer import Serializer
 
 
 class TaskMonitoringService:
     def __init__(self):
-        """
-        Initialize TaskMonitoringService with database access
-        """
+        """Service for monitoring and managing Celery task results."""
         self.db = TaskAdapter()
         self.serializer = Serializer()
 
-    def retry_task(self, task_id: str):
+
+    def filter_tasks_by_type_and_date(self, start_date: datetime, end_date: datetime, status: TaskStatus) -> List[dict]:
+        """Return tasks within a date range filtered by status."""
+        query = {
+            "date_done": {
+                "$gte": start_date,
+                "$lte": end_date
+            },
+            "status": status.value
+        }
+        return self.db.filter_tasks(query)
+
+    def retry_task(self, task_id: str) -> None:
+        """Retry a specific task by ID."""
         pass
 
-    def retry_tasks(self):
+    def retry_tasks(self) -> None:
+        """Retry failed tasks in bulk."""
         pass
 
-    def purge_old_tasks(self):
-        pass
+    def purge_old_tasks(self, status: TaskStatus) -> str:
+        """Delete tasks older than a fixed time window"""
 
-    def count_errors(self):
-        pass
+        cutoff_date = datetime.now(timezone.utc) - timedelta(days=365)
+        result = self.db.tasks.delete_many({
+            "date_done": {"$lt": cutoff_date},
+            "status": status.value
+        })
+        deleted_count = result.deleted_count
+        logger.info(f"{deleted_count} old {status.value} tasks deleted")
+        return f"Deleted {deleted_count} {status.value} tasks"
 
-    def schedule_cleanups(self):
-        pass
+
+    def count_tasks(self) -> str:
+        """Count all tasks in the collection."""
+        result = self.db.tasks.count_documents({})
+        return f"{result} tasks found"
+
+
+    def count_filtered_tasks(self, start_date: datetime, end_date: datetime, status: TaskStatus) -> str:
+        """Count tasks within a date range filtered by status."""
+        query = {
+            "date_done": {
+                "$gte": start_date,
+                "$lte": end_date
+            },
+            "status": status.value
+        }
+        result = self.db.tasks.count_documents(query)
+        return f"{result} {status} tasks found"
 
