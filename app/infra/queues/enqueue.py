@@ -1,4 +1,5 @@
-from app.domain.subscribers.services.notification_service.tasks import send_email_notification
+from app.domain.subscribers.services.notification_service.dispatcher.tasks import send_email_notification
+from app.infra.log_service import logger
 
 
 def queue_subscription_confirmation(to_email, name, product_name, unsubscribe_link):
@@ -21,6 +22,8 @@ def queue_subscription_confirmation(to_email, name, product_name, unsubscribe_li
         product_name=product_name,
         unsubscribe_link=unsubscribe_link
     )
+    logger.info("Enqueue called")
+
     return task.id
 
 

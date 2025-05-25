@@ -3,7 +3,7 @@ from typing import List
 
 from app.infra.db.adapters.task_adapter import TaskAdapter
 from app.infra.log_service import logger
-from app.infra.services.enums import TaskStatus
+from app.infra.services.monitoring.enums import TaskStatus
 from app.shared.serializer import Serializer
 
 

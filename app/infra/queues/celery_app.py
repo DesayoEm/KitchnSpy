@@ -8,14 +8,14 @@ celery_app.conf.update(
     result_backend=settings.DB_URI,
     mongodb_backend_settings={
         "database": "kitchnspy",
-        "taskmeta_collection": "celery_tasks"
+        "taskmeta_collection": "tasks"
     },
     task_serializer='json',
     accept_content=['json'],
     result_serializer='json',
     timezone='UTC',
     enable_utc=True,
-    include=['app.domain.subscribers.services.notification_service.tasks']
+    include=['app.domain.subscribers.services.notification_service.dispatcher.tasks']
 
 )
 celery_app.conf.task_routes = {

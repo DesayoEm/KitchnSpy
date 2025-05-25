@@ -1,10 +1,11 @@
 from app.infra.queues.celery_app import celery_app
 from app.domain.subscribers.services.notification_service.email_config import EmailService
 from app.domain.subscribers.services.notification_service.email_notifications import EmailNotificationService
-from src.kitchnspy.app.infra.log_service import logger
+from app.infra.log_service import logger
 
 email_service = EmailService()
 notification_service = EmailNotificationService()
+
 
 @celery_app.task(name="send_email_notification")
 def send_email_notification(notification_type, **kwargs):
@@ -24,12 +25,14 @@ def send_email_notification(notification_type, **kwargs):
         """
     try:
         if notification_type == "subscription_confirmation":
+            logger.info("task called")
             return notification_service.send_subscription_confirmation(
                 to_email=kwargs.get("to_email"),
                 name=kwargs.get("name"),
                 product_name=kwargs.get("product_name"),
                 unsubscribe_link=kwargs.get("unsubscribe_link")
             )
+
 
         elif notification_type == "unsubscribed_confirmation":
             return notification_service.send_unsubscribed_confirmation(

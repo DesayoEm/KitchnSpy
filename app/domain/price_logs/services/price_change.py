@@ -1,4 +1,4 @@
-from app.domain.subscribers.services.notification_service import NotificationService
+from app.domain.subscribers.services.notification_service.email_notifications import EmailNotificationService
 from app.domain.products.services.product_service import ProductService
 from app.domain.subscribers.services.subscription_service import SubscriptionService
 from app.infra.log_service import logger
@@ -7,7 +7,7 @@ from app.infra.log_service import logger
 class PriceChangeService:
     def __init__(self):
         self.subscribers = SubscriptionService()
-        self.notification = NotificationService()
+        self.notification = EmailNotificationService()
         self.products = ProductService()
 
     @staticmethod

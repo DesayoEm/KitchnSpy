@@ -1,27 +1,35 @@
-"""
-Example usage of the email enqueuing system.
-This shows how to use the enqueue functions in your application.
-"""
 
-from app.infra.queues.enqueue import (
-    queue_subscription_confirmation,
-)
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+
+from app.domain.subscribers.services.notification_service.dispatcher.tasks import send_email_notification
 
 
-def example_subscription_confirmation():
-    """Example of sending a subscription confirmation email."""
-    task_id = queue_subscription_confirmation(
-        to_email="user@example.com",
-        name="John Doe",
-        product_name="Kitchen Mixer XYZ",
-        unsubscribe_link="https://kitchnspy.com/unsubscribe/abc123"
+def test_simple_task():
+    """Send a test task directly to Celery."""
+    print("Sending test task...")
+
+    task = send_email_notification.delay(
+        notification_type="subscription_confirmation",
+        to_email="test@example.com",
+        name="Test User",
+        product_name="Test Product",
+        unsubscribe_link="https://example.com/unsubscribe"
     )
-    print(f"Queued subscription confirmation email: {task_id}")
 
+    print(f"Task ID: {task.id}")
+    print("Waiting for task result...")
+
+
+    try:
+        result = task.get(timeout=10)
+        print(f"Task completed with result: {result}")
+    except Exception as e:
+        print(f"Error getting task result: {e}")
 
 
 if __name__ == "__main__":
-    example_subscription_confirmation()
-
-    print("Email task has been queued. Make sure the Celery worker is running to process it.")
-    print("You can start the worker with: 'windows_celery_worker.bat' on Windows")
+    test_simple_task()
+    print("Done! Check your worker logs for task processing information.")
