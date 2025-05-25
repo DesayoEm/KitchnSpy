@@ -1,4 +1,7 @@
-from app.domain.subscribers.services.notification_service.dispatcher.tasks import send_email_notification
+from app.domain.price_logs.services.notification_service import tasks as price_tasks
+from app.domain.products.services.notification_service import tasks as product_tasks
+from app.domain.subscribers.services.notification_service import tasks as subscriber_tasks
+
 from app.infra.log_service import logger
 
 
@@ -15,7 +18,7 @@ def queue_subscription_confirmation(to_email, name, product_name, unsubscribe_li
     Returns:
         str: Task ID of the queued task
     """
-    task = send_email_notification.delay(
+    task = subscriber_tasks.send_email_notification.delay(
         notification_type="subscription_confirmation",
         to_email=to_email,
         name=name,
@@ -40,7 +43,7 @@ def queue_unsubscribed_confirmation(to_email, name, product_name, subscription_l
     Returns:
         str: Task ID of the queued task
     """
-    task = send_email_notification.delay(
+    task = subscriber_tasks.send_email_notification.delay(
         notification_type="unsubscribed_confirmation",
         to_email=to_email,
         name=name,
@@ -69,7 +72,7 @@ def queue_price_change_notification(to_email, name, product_name, previous_price
     Returns:
         str: Task ID of the queued task
     """
-    task = send_email_notification.delay(
+    task = price_tasks.send_email_notification.delay(
         notification_type="price_change",
         to_email=to_email,
         name=name,
@@ -96,10 +99,22 @@ def queue_product_removed_notification(to_email, name, product_name):
     Returns:
         str: Task ID of the queued task
     """
-    task = send_email_notification.delay(
+    task = product_tasks.send_email_notification.delay(
         notification_type="product_removed",
         to_email=to_email,
         name=name,
         product_name=product_name
     )
     return task.id
+
+# TASK_MAP = {
+#     "subscription_confirmation": subscriber_tasks.send_email_notification,
+#     "unsubscribed_confirmation": subscriber_tasks.send_email_notification,
+#     "price_change": price_tasks.send_email_notification,
+#     "product_removed": product_tasks.send_email_notification,
+# }
+#
+# def queue_email(notification_type: str, **kwargs) -> str:
+#     task = TASK_MAP[notification_type].delay(notification_type=notification_type, **kwargs)
+#     logger.info(f"Enqueued {notification_type} email")
+#     return task.id

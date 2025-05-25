@@ -1,4 +1,4 @@
-from app.domain.subscribers.services.notification_service.dispatcher.queued import\
+from app.domain.subscribers.services.notification_service.queued import\
     NotificationDispatcher
 from app.infra.db.adapters.subscriber_adapter import SubscriberAdapter
 from app.shared.exceptions import NotSubscribedError

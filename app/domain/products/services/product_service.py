@@ -1,7 +1,7 @@
 from app.infra.db.adapters.product_adapter import ProductAdapter
 from app.domain.products.schema import ProductCreate, ProductData, ProductsCreateBatch, ProductsUpdateBatch
 from app.shared.exceptions import DocsNotFoundError, FailedRequestError
-from app.domain.subscribers.services.notification_service.email_notifications import EmailNotificationService
+from app.infra.services.notifications.email_templates import EmailTemplateService
 from app.infra.scraping.kitchenaid_scraper import Scraper
 from app.shared.serializer import Serializer
 from typing import List, Dict
@@ -17,7 +17,7 @@ class ProductService:
         self.db = ProductAdapter()
         self.scraper = Scraper(timeout=30, max_retries=3)
         self.serializer = Serializer()
-        self.notification_service = EmailNotificationService()
+        self.notification_service = EmailTemplateService()
 
 
 

@@ -4,7 +4,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-from app.domain.subscribers.services.notification_service.dispatcher.tasks import send_email_notification
+from app.domain.subscribers.services.notification_service.tasks import send_email_notification
 
 
 def test_simple_task():

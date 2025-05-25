@@ -1,11 +1,11 @@
-from app.infra.queues.enqueue import (
-    queue_subscription_confirmation,
-    queue_unsubscribed_confirmation,
-)
+from app.infra.services.notifications.email_templates import EmailTemplateService
 
-class NotificationDispatcher:
+class UnqueuedNotificationDispatcher:
+    def __init__(self):
+        self.service = EmailTemplateService()
+
     def send_subscription_email(self, subscriber_data: dict):
-        return queue_subscription_confirmation(
+        return self.service.send_subscription_confirmation(
             to_email=subscriber_data["email_address"],
             name=subscriber_data["name"],
             product_name=subscriber_data["product_name"],
@@ -13,7 +13,7 @@ class NotificationDispatcher:
         )
 
     def send_unsubscribed_email(self, subscriber_data: dict):
-        return queue_unsubscribed_confirmation(
+        return self.service.send_unsubscribed_confirmation(
             to_email=subscriber_data["email_address"],
             name=subscriber_data["name"],
             product_name=subscriber_data["product_name"],

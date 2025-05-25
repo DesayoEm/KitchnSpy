@@ -15,9 +15,13 @@ celery_app.conf.update(
     result_serializer='json',
     timezone='UTC',
     enable_utc=True,
-    include=['app.domain.subscribers.services.notification_service.dispatcher.tasks']
-
 )
+celery_app.autodiscover_tasks([
+    "app.domain.products",
+    "app.domain.price_logs",
+    "app.domain.subscribers",
+])
+
 celery_app.conf.task_routes = {
     "send_email_notification": {"queue": "default"},
 }

@@ -1,8 +1,9 @@
 from datetime import datetime, timezone, timedelta
 from bson import ObjectId
+
+from app.domain.price_logs.services.notification_service.queued import NotificationDispatcher
 from app.infra.db.adapters.price_log_adapter import PriceLogAdapter
 from app.shared.exceptions import URLNotFoundError
-from app.domain.price_logs.services.price_change import PriceChangeService
 from app.infra.scraping.kitchenaid_scraper import Scraper
 from app.domain.products.services.product_service import ProductService
 from app.domain.price_logs.utils import PriceUtils
@@ -21,7 +22,8 @@ class PriceLogService:
         self.scraper = Scraper()
         self.util = PriceUtils()
         self.serializer = Serializer()
-        self.price_service = PriceChangeService()
+        self.notifier = NotificationDispatcher()
+
 
 
     def log_price(self, product_id: str) -> dict:
@@ -39,7 +41,7 @@ class PriceLogService:
             cleaned_new_price = self.util.validate_price_format(new["price"])
             new_price  = self.util.parse_price(cleaned_new_price)
 
-            change = self.price_service.detect_change(previous_price, new_price)
+            change = self.util.detect_change(previous_price, new_price)
 
             data = {
                 "product_id": str(ObjectId(product_id)),
@@ -54,7 +56,7 @@ class PriceLogService:
 
             if not change["trigger"]:#event
                 date_str = data["date_checked"].strftime('%Y-%m-%d')
-                self.price_service.notify_subscribers(
+                self.notify_subscribers(
                     product_id, previous_price, new_price, change["price_diff"], change["change_type"],
                     date_str
                 )
@@ -63,6 +65,31 @@ class PriceLogService:
 
         except Exception:
             raise
+
+    def notify_subscribers(
+        self, product_id: str, previous_price: float, new_price: float, price_diff: float,
+        change_type: str, date_checked: str
+            ):
+
+        from app.domain.subscribers.services.subscription_service import SubscriptionService
+        subscribers = SubscriptionService()
+
+        subscribers = list(subscribers.yield_product_subscribers(product_id))
+        logger.info(f"Found {len(subscribers)} subscribers for product {product_id}")
+        product = self.products.find_product(product_id)
+
+        for subscriber in subscribers:
+            logger.info(f"Found {len(subscribers)} subscribers for product {product_id}")
+
+            price_change_data = {
+                "to_email": subscriber['email_address'], "name": subscriber['name'],
+                "product_name": product['product_name'], "previous_price": previous_price,
+                "new_price": new_price, "price_diff": price_diff, "change_type": change_type,
+                "date_checked": date_checked, "product_link": product['url']
+            }
+
+            self.notifier.send_price_change_notification(price_change_data)
+
 
     def log_prices(self) -> dict:
         """Log prices for all products and return a summary."""
