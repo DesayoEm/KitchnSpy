@@ -1,6 +1,4 @@
-from app.infra.queues.enqueue import (
-    queue_price_change_notification
-)
+from app.infra.queues.enqueue import queue_price_change_notification
 
 class NotificationDispatcher:
     @staticmethod

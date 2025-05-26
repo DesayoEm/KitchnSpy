@@ -1,33 +1,39 @@
-*Building  with caffeine, and the desperate hope of finally justifying buying that gorgeous Evergreen Artisan mixer or maybe that classic white tilt-head... or both?*
+# KitchnSpy
 
-## Okay, What's This about?
+**KitchnSpy** is a data-first price tracking system built with FastAPI, MongoDB, and Celery.  
+It scrapes selected KitchenAid products, logs historical price changes, and notifies subscribers via email when prices change or products are removed.
 
-I'm in the market for a KitchenAid tilt head stand mixer and mini food processor.
+> *Built with caffeine and the desperate hope of justifying that gorgeous Evergreen Artisan mixer—or maybe the classic white tilt-head... or both?*
 
-KitchnSpy uses a sophisticated digital network (just kidding, it's just BeautifulSoup) to scrape the KitchenAid website and track the prices of these beauties:
+---
 
-**Mixer Design Series 4.7L Evergreen Artisan (5KSM180WS)** - You'll understand my obsession if you know how gorgeous it is
+## Tech Stack
 
-**Mixer Tilt-Head 4.3L Classic White (5K45SS)** - Never goes out of style
+- **FastAPI** – API layer 
+- **MongoDB** – DB storage
+- **Celery + Redis** – Handles database queues, background scraping and notifications
+- **BeautifulSoup** – HTML parsing engine for scraping web pages
+- **Power BI** – For data exploration and graphing 
 
-**Glass Mixing Bowl 4.7 L (5KSM5GB)** - Because its transparent duh ¯\_(ツ)_/¯
+---
 
-**Mini Food Chopper 830ml White (5KFC3516)** - I have this in red, so I can't justify buying another one.
+## 📦 Features
 
+-  **Email Alerts** – Subscribe to products and receive notifications on price drops
+-  **Historical Tracking** – Logs each price change as a timestamped event
+-  **Graphing (in progress)** – Export to Power BI or visualize usingStreamlit
 
-## Features 
+---
 
-**Email Alerts**
+## Coming Soon
 
-**Historical Tracking**
+- **Analytics Module** – Volatility detection, trend scoring, and price behavior summaries
+- **Export Module** – CSV, Excel, and JSON download endpoints for any product
+- **Multi-Vendor Support** – Modular scraping engine with vendor-specific adapters
 
-**Pretty Graphs with Matplotlib visualizations**
+---
 
+## 📝 Note
 
-## ⚠️ Disclaimer
-
-* I'm not affiliated with KitchenAid, I just can't take my eyes off some of their stuff.
-
-
-
+This project is not affiliated with KitchenAid — I just like their stuff a lot.
 

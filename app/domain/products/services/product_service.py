@@ -1,7 +1,7 @@
+from app.domain.products.services.notification_service.queued import NotificationDispatcher
 from app.infra.db.adapters.product_adapter import ProductAdapter
 from app.domain.products.schema import ProductCreate, ProductData, ProductsCreateBatch, ProductsUpdateBatch
 from app.shared.exceptions import DocsNotFoundError, FailedRequestError
-from app.infra.services.notifications.email_templates import EmailTemplateService
 from app.infra.scraping.kitchenaid_scraper import Scraper
 from app.shared.serializer import Serializer
 from typing import List, Dict
@@ -17,7 +17,7 @@ class ProductService:
         self.db = ProductAdapter()
         self.scraper = Scraper(timeout=30, max_retries=3)
         self.serializer = Serializer()
-        self.notification_service = EmailTemplateService()
+        self.notifier = NotificationDispatcher()
 
 
 
@@ -129,13 +129,13 @@ class ProductService:
         subscribers = subscription_crud.yield_product_subscribers(product_id)
         for subscriber in subscribers:
             try:
-                email = subscriber['email_address']
-                name = subscriber['name']
-                product_name = subscriber['product_name']
+                deleted_product_data = {
+                    "to_email": subscriber['email_address'],
+                    "name": subscriber['name'],
+                    "product_name": subscriber['product_name']
+            }
+                self.notifier.send_product_removed_notification(deleted_product_data)
 
-                self.notification_service.send_product_removed_notification(
-                    to_email=email, name=name, product_name=product_name
-                )
 
                 subscription_crud.delete_subscriber(subscriber["_id"])
             except Exception as e:
