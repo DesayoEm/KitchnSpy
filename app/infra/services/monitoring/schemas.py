@@ -1,5 +1,7 @@
-from enum import Enum
 from pydantic import BaseModel
+from datetime import datetime
+from enum import Enum
+
 
 class TaskStatus(str, Enum):
     PENDING = "PENDING"
@@ -9,10 +11,19 @@ class TaskStatus(str, Enum):
     SUCCESS = "SUCCESS"
     FAILURE = "FAILURE"
     REVOKED = "REVOKED"
+    QUEUED = "QUEUED"
 
-class TaskStatusResponse(BaseModel):
+
+class MergedTaskRecord(BaseModel):
     task_id: str
+    type: str | None
+    payload: dict | None
+    created_at: datetime | None
     status: TaskStatus
-    result: str | None
-    error: str | None
-
+    retries: int | None
+    result: str | dict | bool | None
+    traceback: str | None
+    runtime: float | None
+    queue: str | None
+    worker: str | None
+    completed_at: datetime | None

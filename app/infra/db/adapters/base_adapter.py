@@ -19,7 +19,8 @@ class BaseAdapter:
             self.products = db["products"]
             self.price_logs = db["price_log"]
             self.subscribers = db["subscribers"]
-            self.tasks = db["tasks"]
+            self.tasks = db["task_audit"]
+            self.celery_results = db["celery_results"]
             self.serializer = Serializer()
             self.ensure_indexes()
 

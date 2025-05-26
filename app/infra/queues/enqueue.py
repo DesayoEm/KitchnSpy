@@ -68,6 +68,20 @@ def queue_unsubscribed_confirmation(to_email, name, product_name, subscription_l
         "subscription_link":subscription_link
     }
     )
+    db.insert_task_audit({
+        "task_id": task.id,
+        "type": "unsubscribed_confirmation",
+        "payload": {
+            "to_email": to_email,
+            "name": name,
+            "product_name": product_name,
+            "subscription_link": subscription_link
+        },
+        "status": "QUEUED",
+        "created_at": datetime.now(UTC)
+    })
+
+    logger.info("Enqueue + audit log recorded")
     return task.id
 
 
@@ -90,18 +104,39 @@ def queue_price_change_notification(to_email, name, product_name, previous_price
     Returns:
         str: Task ID of the queued task
     """
-    task = price_tasks.send_email_notification.delay(
-        notification_type="price_change",
-        to_email=to_email,
-        name=name,
-        product_name=product_name,
-        previous_price=previous_price,
-        new_price=new_price,
-        price_diff=price_diff,
-        change_type=change_type,
-        date_checked=date_checked,
-        product_link=product_link
+    task = price_tasks.send_email_notification.apply_async(
+        kwargs = {
+            "notification_type": "price_change",
+            "to_email": to_email,
+            "name": name,
+            "product_name": product_name,
+            "previous_price": previous_price,
+            "new_price": new_price,
+            "price_diff": price_diff,
+            "change_type": change_type,
+            "date_checked": date_checked,
+            "product_link":product_link
+        }
     )
+    db.insert_task_audit({
+        "task_id": task.id,
+        "type": "price_change",
+        "payload": {
+            "to_email": to_email,
+            "name": name,
+            "product_name": product_name,
+            "previous_price": previous_price,
+            "new_price": new_price,
+            "price_diff": price_diff,
+            "change_type": change_type,
+            "date_checked": date_checked,
+            "product_link":product_link
+        },
+        "status": "QUEUED",
+        "created_at": datetime.now(UTC)
+    })
+
+    logger.info("Enqueue + audit log recorded")
     return task.id
 
 
@@ -117,13 +152,35 @@ def queue_product_removed_notification(to_email, name, product_name):
     Returns:
         str: Task ID of the queued task
     """
-    task = product_tasks.send_email_notification.delay(
-        notification_type="product_removed",
-        to_email=to_email,
-        name=name,
-        product_name=product_name
+    task = product_tasks.send_email_notification.apply_async(
+        kwargs = {
+            "notification_type": "product_removed",
+            "to_email": to_email,
+            "name": name,
+            "product_name": product_name
+        }
+
     )
+    db.insert_task_audit({
+        "task_id": task.id,
+        "type": "product_removed",
+        "payload": {
+            "to_email": to_email,
+            "name": name,
+            "product_name": product_name
+        },
+        "status": "QUEUED",
+        "created_at": datetime.now(UTC)
+    })
+
+    logger.info("Enqueue + audit log recorded")
     return task.id
+
+
+
+
+
+
 
 # TASK_MAP = {
 #     "subscription_confirmation": subscriber_tasks.send_email_notification,

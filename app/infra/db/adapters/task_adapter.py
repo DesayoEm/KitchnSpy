@@ -7,9 +7,17 @@ class TaskAdapter(BaseAdapter):
     def insert_task_audit(self, data: dict):
         self.tasks.insert_one(data)
 
+    def find_task_by_id(self, _id: str):
+        return self.find_by_id(self.tasks, _id, "Task")
 
-    def find_task_by_id(self, task_id: str):
-        return self.find_by_id(self.tasks, task_id, "Task")
+    def find_task(self, task_id: str):
+        task = self.tasks.find({"task_id": task_id})
+        if not task:
+            raise DocNotFoundError(identifier=task_id, entity="task")
+
+    def find_celery_result_by_id(self, task_id: str):
+        result = self.celery_results.find({"_id": task_id})
+        return result
 
 
     def find_all_tasks(self, page: int = 1) -> List[dict]:

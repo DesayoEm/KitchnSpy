@@ -3,7 +3,7 @@ from typing import List
 
 from app.infra.db.adapters.task_adapter import TaskAdapter
 from app.infra.log_service import logger
-from app.infra.services.monitoring.schemas import TaskStatus, TaskStatusResponse
+from app.infra.services.monitoring.schemas import TaskStatus, MergedTaskRecord
 from app.shared.serializer import Serializer
 
 
@@ -13,9 +13,25 @@ class TaskMonitoringService:
         self.db = TaskAdapter()
         self.serializer = Serializer()
 
-    def find_task(self, task_id: str) -> TaskStatusResponse:
-        task = self.db.find_task_by_id(task_id)
-        return TaskStatusResponse.model_validate(task)
+    def get_task_detail(self, task_id: str) -> MergedTaskRecord:
+        audit_record = self.db.find_task(task_id)
+        celery_record = self.db.find_celery_result_by_id(task_id)
+
+        task = {
+            "task_id": task_id,
+            "type": audit_record.get("type"),
+            "payload": audit_record.get("payload"),
+            "created_at": audit_record.get("created_at"),
+            "status": celery_record.get("status", "QUEUED"),
+            "retries": celery_record.get("result", {}).get("retries"),
+            "result": celery_record.get("result"),
+            "traceback": celery_record.get("traceback"),
+            "runtime": celery_record.get("runtime"),
+            "queue": celery_record.get("delivery_info", {}).get("routing_key", "default"),
+            "worker": celery_record.get("worker"),
+            "completed_at": celery_record.get("date_done")
+        }
+        return MergedTaskRecord.model_validate(task)
 
 
     def filter_tasks_by_type_and_date(
@@ -23,7 +39,7 @@ class TaskMonitoringService:
             end_date: datetime,
             status: TaskStatus,
             per_page: int
-        ) -> List[TaskStatusResponse]:
+        ) -> List[MergedTaskRecord]:
 
         """Return tasks within a date range filtered by status."""
         query = {
@@ -34,7 +50,7 @@ class TaskMonitoringService:
             "status": status.value
         }
         tasks = self.db.filter_tasks(query, per_page)
-        return [TaskStatusResponse.model_validate(task) for task in tasks]
+        return [MergedTaskRecord.model_validate(task) for task in tasks]
 
 
     def retry_task(self, task_id: str) -> None:

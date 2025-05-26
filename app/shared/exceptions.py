@@ -91,3 +91,4 @@ class NotificationTypeError(KitchnSpyExceptions):
         super().__init__()
         self.display = f"Unknown notification type: {notification_type}"
         self.log = f"Unknown notification type entered: {notification_type}"
+

@@ -8,7 +8,7 @@ celery_app.conf.update(
     result_backend=settings.DB_URI,
     mongodb_backend_settings={
         "database": "kitchnspy",
-        "taskmeta_collection": "tasks"
+        "taskmeta_collection": "celery_results"
     },
     task_serializer='json',
     accept_content=['json'],
