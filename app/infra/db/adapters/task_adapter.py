@@ -4,27 +4,15 @@ from app.infra.db.adapters.base_adapter import BaseAdapter
 
 class TaskAdapter(BaseAdapter):
 
+    def insert_task_audit(self, data: dict):
+        self.tasks.insert_one(data)
+
+
     def find_task_by_id(self, task_id: str):
         return self.find_by_id(self.tasks, task_id, "Task")
 
 
-    def find_failed_tasks(self, page: int = 1) -> List[dict]:
-        """Retrieve failed tasks with pagination."""
-        try:
-            cursor = self.tasks.find({"status": "FAILURE"}).sort("date_done",pymongo.ASCENDING)
-            failed_tasks = self.paginate_results(cursor, page, 10)
-
-            if not failed_tasks:
-                raise DocsNotFoundError(entities="failed tasks", page=page)
-            return failed_tasks
-
-        except Exception as e:
-            if not isinstance(e, DocsNotFoundError):
-                logger.error(f"Error retrieving failed tasks: {str(e)}")
-                raise
-
-
-    def find_tasks(self, page: int = 1) -> List[dict]:
+    def find_all_tasks(self, page: int = 1) -> List[dict]:
         try:
             cursor = self.tasks.find({}).sort("date_done", pymongo.ASCENDING)
             recent_tasks = self.paginate_results(cursor, page, 10)
@@ -39,10 +27,10 @@ class TaskAdapter(BaseAdapter):
                 raise
 
 
-    def filter_tasks(self, query, page:int = 1)-> List[dict]:
+    def filter_tasks(self, query, per_page, page:int = 1)-> List[dict]:
         try:
             cursor = self.tasks.find(query).sort("date_done", pymongo.ASCENDING)
-            recent_tasks = self.paginate_results(cursor, page, 10)
+            recent_tasks = self.paginate_results(cursor, per_page, page)
 
             if not recent_tasks:
                 raise DocsNotFoundError(entities="tasks", page=page)

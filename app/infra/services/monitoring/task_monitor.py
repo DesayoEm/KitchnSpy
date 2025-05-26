@@ -3,7 +3,7 @@ from typing import List
 
 from app.infra.db.adapters.task_adapter import TaskAdapter
 from app.infra.log_service import logger
-from app.infra.services.monitoring.enums import TaskStatus
+from app.infra.services.monitoring.schemas import TaskStatus, TaskStatusResponse
 from app.shared.serializer import Serializer
 
 
@@ -13,8 +13,18 @@ class TaskMonitoringService:
         self.db = TaskAdapter()
         self.serializer = Serializer()
 
+    def find_task(self, task_id: str) -> TaskStatusResponse:
+        task = self.db.find_task_by_id(task_id)
+        return TaskStatusResponse.model_validate(task)
 
-    def filter_tasks_by_type_and_date(self, start_date: datetime, end_date: datetime, status: TaskStatus) -> List[dict]:
+
+    def filter_tasks_by_type_and_date(
+            self, start_date: datetime,
+            end_date: datetime,
+            status: TaskStatus,
+            per_page: int
+        ) -> List[TaskStatusResponse]:
+
         """Return tasks within a date range filtered by status."""
         query = {
             "date_done": {
@@ -23,7 +33,9 @@ class TaskMonitoringService:
             },
             "status": status.value
         }
-        return self.db.filter_tasks(query)
+        tasks = self.db.filter_tasks(query, per_page)
+        return [TaskStatusResponse.model_validate(task) for task in tasks]
+
 
     def retry_task(self, task_id: str) -> None:
         """Retry a specific task by ID."""

@@ -1,9 +1,11 @@
 from app.domain.price_logs.services.notification_service import tasks as price_tasks
 from app.domain.products.services.notification_service import tasks as product_tasks
 from app.domain.subscribers.services.notification_service import tasks as subscriber_tasks
-
+from app.infra.db.adapters.task_adapter import TaskAdapter
+from datetime import datetime, UTC
 from app.infra.log_service import logger
 
+db = TaskAdapter()
 
 def queue_subscription_confirmation(to_email, name, product_name, unsubscribe_link):
     """
@@ -18,22 +20,36 @@ def queue_subscription_confirmation(to_email, name, product_name, unsubscribe_li
     Returns:
         str: Task ID of the queued task
     """
-    task = subscriber_tasks.send_email_notification.delay(
-        notification_type="subscription_confirmation",
-        to_email=to_email,
-        name=name,
-        product_name=product_name,
-        unsubscribe_link=unsubscribe_link
+    task = subscriber_tasks.send_email_notification.apply_async(
+        kwargs={
+            "notification_type": "subscription_confirmation",
+            "to_email": to_email,
+            "name": name,
+            "product_name": product_name,
+            "unsubscribe_link": unsubscribe_link
+        }
     )
-    logger.info("Enqueue called")
+    db.insert_task_audit({
+        "task_id": task.id,
+        "type": "subscription_confirmation",
+        "payload": {
+            "to_email": to_email,
+            "name": name,
+            "product_name": product_name,
+            "unsubscribe_link": unsubscribe_link
+        },
+        "status": "QUEUED",
+        "created_at": datetime.now(UTC)
+    })
 
+    logger.info("Enqueue + audit log recorded")
     return task.id
+
 
 
 def queue_unsubscribed_confirmation(to_email, name, product_name, subscription_link):
     """
     Queue an unsubscription confirmation email.
-
     Args:
         to_email (str): Recipient's email address
         name (str): Recipient's name
@@ -43,12 +59,14 @@ def queue_unsubscribed_confirmation(to_email, name, product_name, subscription_l
     Returns:
         str: Task ID of the queued task
     """
-    task = subscriber_tasks.send_email_notification.delay(
-        notification_type="unsubscribed_confirmation",
-        to_email=to_email,
-        name=name,
-        product_name=product_name,
-        subscription_link=subscription_link
+    task = subscriber_tasks.send_email_notification.apply_async(
+        kwargs= {
+        "notification_type":"unsubscribed_confirmation",
+        "to_email":to_email,
+        "name":name,
+        "product_name":product_name,
+        "subscription_link":subscription_link
+    }
     )
     return task.id
 
