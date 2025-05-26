@@ -13,7 +13,7 @@ from app.shared.exceptions import (
 )
 from app.shared.serializer import Serializer
 from pymongo.errors import DuplicateKeyError, BulkWriteError
-from pymongo.results import InsertOneResult
+from pymongo.results import InsertOneResult, InsertManyResult
 from pymongo.cursor import Cursor
 from pymongo import UpdateOne, ReplaceOne
 from typing import Generator, Any, List, Dict, Mapping

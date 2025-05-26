@@ -5,7 +5,7 @@ from app.infra.queues.enqueue import (
 
 class NotificationDispatcher:
     @staticmethod
-    def send_subscription_email(self, subscriber_data: dict):
+    def send_subscription_email(subscriber_data: dict):
         return queue_subscription_confirmation(
             to_email=subscriber_data["email_address"],
             name=subscriber_data["name"],

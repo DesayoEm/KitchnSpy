@@ -24,6 +24,17 @@ class ProductAdapter(BaseAdapter):
             logger.error(f"Failed to insert product: {str(e)}")
             raise
 
+    def insert_products(self, data: List[dict]) -> int:
+        """Insert multiple product documents into the database."""
+        try:
+            result = self.products.insert_many(data, ordered=False)
+            inserted_count = len(result.inserted_ids)
+            logger.info(f"Inserted {inserted_count} products")
+            return inserted_count
+
+        except Exception as e:
+            logger.error(f"Failed to insert products: {str(e)}")
+            raise
 
     def find_product(self, product_id: str) -> dict:
         """Retrieve a product document by its ID."""

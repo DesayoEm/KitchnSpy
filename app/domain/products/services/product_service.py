@@ -35,7 +35,7 @@ class ProductService:
         return self.serializer.json_serialize_doc(validated_product)
 
 
-    def add_products(self, data: ProductsCreateBatch) -> List[Dict]:
+    def add_products(self, data: ProductsCreateBatch) -> str:
         """Scrape multiple products from a list and insert them into the database."""
         products = data.products
         product_dicts = [product.model_dump() for product in products]
@@ -46,8 +46,8 @@ class ProductService:
             for product in scraped_products
         ]
 
-        self.db.insert_or_update_products(validated_products)
-        return self.serializer.json_serialize_docs(validated_products)
+        inserted = self.db.insert_products(validated_products)
+        return f"Inserted {inserted} products"
 
 
     def compile_product_ids(self) -> List[str]:
