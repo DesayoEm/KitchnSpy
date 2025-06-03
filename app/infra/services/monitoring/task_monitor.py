@@ -15,8 +15,7 @@ from app.shared.serializer import Serializer
 TASK_MAP = {
     "product_removed": send_product_email_notification,
     "price_change": send_price_email_notification,
-    "subscription_confirmation": send_subscription_email_notification,
-    "unsubscribed_confirmation": send_subscription_email_notification
+    "subscription_notification": send_subscription_email_notification,
 
 }
 class TaskMonitoringService:
@@ -95,6 +94,7 @@ class TaskMonitoringService:
     def retry_tasks(self) -> None:
         """Retry failed tasks in bulk."""
         pass
+
 
     def purge_old_tasks(self, status: TaskStatus) -> str:
         """Delete tasks older than a fixed time window"""
