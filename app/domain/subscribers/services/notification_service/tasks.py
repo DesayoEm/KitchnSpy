@@ -6,12 +6,12 @@ from app.infra.log_service import logger
 template = EmailTemplateService()
 
 
-@celery_app.task(name="send_email_notification",
+@celery_app.task(name="send_subscription_email_notification",
                  bind = True,
                 autoretry_for=(smtplib.SMTPException, ConnectionError),
                 retry_kwargs={"max_retries": 2},
                  default_retry_delay=60)
-def send_email_notification(self, notification_type, **kwargs):
+def send_subscription_email_notification(self, notification_type, **kwargs):
     """
         Send an email notification based on the notification type.
 

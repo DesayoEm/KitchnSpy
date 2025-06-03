@@ -1,6 +1,10 @@
 from datetime import datetime, timezone, timedelta
 from typing import List
 
+from app.domain.price_logs.services.notification_service.tasks import send_price_email_notification
+from app.domain.products.services.notification_service.tasks import send_product_email_notification
+from app.domain.subscribers.services.notification_service.tasks import send_subscription_email_notification
+
 from app.infra.db.adapters.task_adapter import TaskAdapter
 from app.infra.log_service import logger
 from app.infra.services.monitoring.schemas import TaskStatus, MergedTaskRecord
@@ -9,7 +13,11 @@ from app.shared.serializer import Serializer
 
 
 TASK_MAP = {
-    "send_email_notification": send_email_notification
+    "product_removed": send_product_email_notification,
+    "price_change": send_price_email_notification,
+    "subscription_confirmation": send_subscription_email_notification,
+    "unsubscribed_confirmation": send_subscription_email_notification
+
 }
 class TaskMonitoringService:
     def __init__(self):
@@ -78,7 +86,7 @@ class TaskMonitoringService:
             "type": f"{task.get('name')}_retry",
             "payload": kwargs,
             "status": "REQUEUED",
-            "created_at": datetime.utcnow()
+            "created_at": datetime.now(timezone.utc)
         })
 
         return retry_result.id

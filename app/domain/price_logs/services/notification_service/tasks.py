@@ -1,4 +1,5 @@
 from app.infra.queues.celery_app import celery_app
+import smtplib
 from app.infra.services.notifications.email_templates import EmailTemplateService
 from celery import Task
 from app.infra.log_service import logger
@@ -6,11 +7,13 @@ from app.infra.log_service import logger
 template = EmailTemplateService()
 
 
-@celery_app.task(name="send_email_notification",
-                 bind = True,
-                max_retries=3,
+@celery_app.task(name="send_price_email_notification",
+                 bind=True,
+                 autoretry_for=(smtplib.SMTPException, ConnectionError),
+                 retry_kwargs={"max_retries": 2},
                  default_retry_delay=60)
-def send_email_notification(self, notification_type, **kwargs):
+
+def send_price_email_notification(self, notification_type, **kwargs):
     """
         Send an email notification based on the notification type.
         Args:
@@ -38,6 +41,11 @@ def send_email_notification(self, notification_type, **kwargs):
         else:
             raise ValueError(f"Unknown notification type: {notification_type}")
 
+
+    except (smtplib.SMTPException, ConnectionError) as exc:
+        logger.error(f"Error sending {notification_type} notification: {str(exc)}")
+        raise self.retry(exc=exc)
+
     except Exception as exc:
         logger.error(f"Error sending {notification_type} notification: {str(exc)}")
-        raise self.retry(exc = exc)
+        raise

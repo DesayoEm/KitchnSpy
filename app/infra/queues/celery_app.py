@@ -25,7 +25,10 @@ celery_app.conf.update(
 
 
 celery_app.conf.task_routes = {
-    "send_email_notification": {"queue": "default"},
+    "send_product_email_notification": {"queue": "default"},
+    "send_price_email_notification": {"queue": "default"},
+    "send_subscription_email_notification": {"queue": "default"}
+
 }
 
 
