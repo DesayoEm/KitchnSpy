@@ -67,7 +67,7 @@ class TaskMonitoringService:
     def retry_task(self, task_id: str) -> None:
         """Retry a specific task by ID."""
         task = self.db.find_celery_result_by_id(task_id)
-        if task.get('status') != 'FAILURE':
+        if task.get('status', '').upper() != TaskStatus.FAILURE:
             raise NotFailedTaskError(task_id=task_id)
 
         task_name = task.get('name')
@@ -81,6 +81,7 @@ class TaskMonitoringService:
 
         self.db.insert_task_audit({
             "task_id": retry_result.id,
+            "retry_of": task_id,
             "name": task_name,
             "type": f"{task.get('name')}_retry",
             "payload": kwargs,
@@ -90,11 +91,36 @@ class TaskMonitoringService:
 
         return retry_result.id
 
-
-    def retry_tasks(self) -> None:
+    def retry_failed_tasks(
+            self,
+            start_date: datetime,
+            end_date: datetime
+    ) -> dict:
         """Retry failed tasks in bulk."""
-        pass
+        status = TaskStatus.FAILURE
+        tasks = self.filter_tasks_by_type_and_date(start_date, end_date, status)
+        failed_count = success_count = 0
+        error_log = []
 
+        for task in tasks:
+            task_id = task["task_id"]
+            try:
+                self.retry_task(task_id)
+                success_count += 1
+            except Exception as e:
+                failed_count += 1
+                logger.error(f"Task {task_id} failed during bulk retry: {str(e)}")
+                error_log.append({
+                    "task_id": task_id,
+                    "error": str(e)
+                })
+
+        return {
+            "retried": success_count,
+            "failed": failed_count,
+            "total": len(tasks),
+            "log": error_log
+        }
 
     def purge_old_tasks(self, status: TaskStatus) -> str:
         """Delete tasks older than a fixed time window"""
