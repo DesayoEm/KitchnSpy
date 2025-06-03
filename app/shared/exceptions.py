@@ -92,3 +92,16 @@ class NotificationTypeError(KitchnSpyExceptions):
         self.display = f"Unknown notification type: {notification_type}"
         self.log = f"Unknown notification type entered: {notification_type}"
 
+class NotFailedTaskError(KitchnSpyExceptions):
+    def __init__(self, task_id:str):
+        super().__init__()
+        self.display = "You can only retry a failed task"
+        self.log = f"Retry attempted on task without a failed status. Task id: {task_id}"
+
+class EmptySearchError(KitchnSpyExceptions):
+    def __init__(self, entry:str):
+        super().__init__()
+        self.display = "Search term must not be empty"
+        self.log = f"Empty search term attempted. Entry: {entry}"
+
+

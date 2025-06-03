@@ -13,7 +13,6 @@ It scrapes selected KitchenAid products, logs historical price changes, and noti
 - **MongoDB** – DB storage
 - **Celery + Redis** – Handles database queues, background scraping and notifications
 - **BeautifulSoup** – HTML parsing engine for scraping web pages
-- **Power BI** – For data exploration and graphing 
 
 ---
 
@@ -21,15 +20,7 @@ It scrapes selected KitchenAid products, logs historical price changes, and noti
 
 -  **Email Alerts** – Subscribe to products and receive notifications on price drops
 -  **Historical Tracking** – Logs each price change as a timestamped event
--  **Graphing (in progress)** – Export to Power BI or visualize usingStreamlit
-
----
-
-## Coming Soon
-
-- **Analytics Module** – Volatility detection, trend scoring, and price behavior summaries
-- **Export Module** – CSV, Excel, and JSON download endpoints for any product
-- **Multi-Vendor Support** – Modular scraping engine with vendor-specific adapters
+-  **Graphing (in progress)** – Visualize usingStreamlit
 
 ---
 

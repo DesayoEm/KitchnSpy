@@ -4,9 +4,13 @@ from typing import List
 from app.infra.db.adapters.task_adapter import TaskAdapter
 from app.infra.log_service import logger
 from app.infra.services.monitoring.schemas import TaskStatus, MergedTaskRecord
+from app.shared.exceptions import NotFailedTaskError
 from app.shared.serializer import Serializer
 
 
+TASK_MAP = {
+    "send_email_notification": send_email_notification
+}
 class TaskMonitoringService:
     def __init__(self):
         """Service for monitoring and managing Celery task results."""
@@ -38,7 +42,6 @@ class TaskMonitoringService:
             self, start_date: datetime,
             end_date: datetime,
             status: TaskStatus,
-            per_page: int
         ) -> List[MergedTaskRecord]:
 
         """Return tasks within a date range filtered by status."""
@@ -49,13 +52,37 @@ class TaskMonitoringService:
             },
             "status": status.value
         }
-        tasks = self.db.filter_tasks(query, per_page)
+        tasks = self.db.filter_tasks(query)
         return [MergedTaskRecord.model_validate(task) for task in tasks]
+
 
 
     def retry_task(self, task_id: str) -> None:
         """Retry a specific task by ID."""
-        pass
+        task = self.db.find_celery_result_by_id(task_id)
+        if task.get('status') != 'FAILURE':
+            raise NotFailedTaskError(task_id=task_id)
+
+        task_name = task.get('name')
+        func = TASK_MAP.get(task_name)
+
+        if not func:
+            raise ValueError(f"Task function '{task_name}' is not registered in TASK_MAP.")
+
+        kwargs = task.get('kwargs', {})
+        retry_result = func.apply_async(kwargs=kwargs)
+
+        self.db.insert_task_audit({
+            "task_id": retry_result.id,
+            "name": task_name,
+            "type": f"{task.get('name')}_retry",
+            "payload": kwargs,
+            "status": "REQUEUED",
+            "created_at": datetime.utcnow()
+        })
+
+        return retry_result.id
+
 
     def retry_tasks(self) -> None:
         """Retry failed tasks in bulk."""
@@ -65,7 +92,8 @@ class TaskMonitoringService:
         """Delete tasks older than a fixed time window"""
 
         cutoff_date = datetime.now(timezone.utc) - timedelta(days=365)
-        result = self.db.tasks.delete_many({
+
+        result = self.db.celery_results.delete_many({
             "date_done": {"$lt": cutoff_date},
             "status": status.value
         })

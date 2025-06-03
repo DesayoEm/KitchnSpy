@@ -31,6 +31,7 @@ def queue_subscription_confirmation(to_email, name, product_name, unsubscribe_li
     )
     db.insert_task_audit({
         "task_id": task.id,
+        "name": "queue_subscription_confirmation",
         "type": "subscription_confirmation",
         "payload": {
             "to_email": to_email,

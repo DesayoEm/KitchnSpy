@@ -76,7 +76,6 @@ class BaseAdapter:
             yield self.serializer.json_serialize_doc(document)
 
 
-
     def paginate_results(self, cursor, per_page, page: int = 1) -> List[Dict]:
         """
         Return a paginated list of documents from a cursor.
