@@ -1,4 +1,4 @@
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta, date
 from typing import List
 
 from app.domain.price_logs.services.notification_service.tasks import send_price_email_notification
@@ -10,6 +10,8 @@ from app.infra.log_service import logger
 from app.infra.services.monitoring.schemas import TaskStatus, MergedTaskRecord
 from app.shared.exceptions import NotFailedTaskError
 from app.shared.serializer import Serializer
+
+now = datetime.now(timezone.utc)
 
 
 TASK_MAP = {
@@ -46,14 +48,14 @@ class TaskMonitoringService:
 
 
     def filter_tasks_by_type_and_date(
-            self, start_date: datetime,
-            end_date: datetime,
+            self, start_date: date,
+            end_date: date,
             status: TaskStatus,
         ) -> List[MergedTaskRecord]:
 
         """Return tasks within a date range filtered by status."""
         query = {
-            "date_done": {
+            "created_at_date": {
                 "$gte": start_date,
                 "$lte": end_date
             },
@@ -64,7 +66,7 @@ class TaskMonitoringService:
 
 
 
-    def retry_task(self, task_id: str) -> None:
+    def retry_failed_task(self, task_id: str) -> None:
         """Retry a specific task by ID."""
         task = self.db.find_celery_result_by_id(task_id)
         if task.get('status', '').upper() != TaskStatus.FAILURE:
@@ -86,15 +88,16 @@ class TaskMonitoringService:
             "type": f"{task.get('name')}_retry",
             "payload": kwargs,
             "status": "REQUEUED",
-            "created_at": datetime.now(timezone.utc)
+            "created_at": now,
+            "created_at_date": now.date()
         })
 
         return retry_result.id
 
     def retry_failed_tasks(
             self,
-            start_date: datetime,
-            end_date: datetime
+            start_date: date,
+            end_date: date
     ) -> dict:
         """Retry failed tasks in bulk."""
         status = TaskStatus.FAILURE
@@ -105,7 +108,7 @@ class TaskMonitoringService:
         for task in tasks:
             task_id = task["task_id"]
             try:
-                self.retry_task(task_id)
+                self.retry_failed_task(task_id)
                 success_count += 1
             except Exception as e:
                 failed_count += 1
@@ -142,10 +145,10 @@ class TaskMonitoringService:
         return f"{result} tasks found"
 
 
-    def count_filtered_tasks(self, start_date: datetime, end_date: datetime, status: TaskStatus) -> str:
+    def count_filtered_tasks(self, start_date: date, end_date: date, status: TaskStatus) -> str:
         """Count tasks within a date range filtered by status."""
         query = {
-            "date_done": {
+            "created_at_date": {
                 "$gte": start_date,
                 "$lte": end_date
             },

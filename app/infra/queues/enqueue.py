@@ -2,10 +2,13 @@ from app.domain.price_logs.services.notification_service import tasks as price_t
 from app.domain.products.services.notification_service import tasks as product_tasks
 from app.domain.subscribers.services.notification_service import tasks as subscriber_tasks
 from app.infra.db.adapters.task_adapter import TaskAdapter
-from datetime import datetime, UTC
+from datetime import datetime, UTC, timezone
 from app.infra.log_service import logger
 
 db = TaskAdapter()
+
+now = datetime.now(timezone.utc)
+
 
 def queue_subscription_confirmation(to_email, name, product_name, unsubscribe_link):
     """
@@ -40,7 +43,8 @@ def queue_subscription_confirmation(to_email, name, product_name, unsubscribe_li
             "unsubscribe_link": unsubscribe_link
         },
         "status": "QUEUED",
-        "created_at": datetime.now(UTC)
+        "created_at": now,
+        "created_at_date": now.date()
     })
 
     logger.info("Enqueue + audit log recorded")
@@ -80,7 +84,8 @@ def queue_unsubscribed_confirmation(to_email, name, product_name, subscription_l
             "subscription_link": subscription_link
         },
         "status": "QUEUED",
-        "created_at": datetime.now(UTC)
+        "created_at": now,
+        "created_at_date": now.date()
     })
 
     logger.info("Enqueue + audit log recorded")
@@ -135,7 +140,8 @@ def queue_price_change_notification(to_email, name, product_name, previous_price
             "product_link":product_link
         },
         "status": "QUEUED",
-        "created_at": datetime.now(UTC)
+        "created_at": now,
+        "created_at_date": now.date()
     })
 
     logger.info("Enqueue + audit log recorded")
@@ -172,7 +178,8 @@ def queue_product_removed_notification(to_email, name, product_name):
             "product_name": product_name
         },
         "status": "QUEUED",
-        "created_at": datetime.now(UTC)
+        "created_at": now,
+        "created_at_date": now.date()
     })
 
     logger.info("Enqueue + audit log recorded")
