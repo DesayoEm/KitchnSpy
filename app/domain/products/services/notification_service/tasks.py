@@ -11,6 +11,7 @@ template = EmailTemplateService()
                  autoretry_for=(smtplib.SMTPException, ConnectionError),
                  retry_kwargs={"max_retries": 2},
                  default_retry_delay=60)
+
 def send_product_email_notification(self, notification_type, **kwargs):
     """
         Send an email notification based on the notification type.

@@ -21,6 +21,25 @@ class ProductService:
 
 
 
+    def find_product(self, product_id: str) -> Dict | None:
+        """Find a single product in the database by its ID."""
+        product = self.db.find_product(product_id)
+        return self.serializer.json_serialize_doc(product)
+
+
+    def search_products_by_name(self, search_term: str) -> List[Dict]:
+        """Search products by name."""
+        return self.db.search_products_by_name(search_term)
+
+
+    def find_all_products(self, per_page) -> List[Dict]:
+        """Find all products in the database, sorted by product name."""
+        products = self.db.find_products_paginated(per_page)
+        if products:
+            return self.serializer.json_serialize_docs(products)
+        return []
+
+
     def add_product(self, data: ProductCreate) -> dict:
         """Scrape a product from the given name and URL and insert it into the database."""
 
@@ -53,23 +72,6 @@ class ProductService:
     def compile_product_ids(self) -> List[str]:
         """Compile all product IDs in a list"""
         return self.db.compile_product_ids()
-
-
-    def find_product(self, product_id: str) -> Dict | None:
-        """Find a single product in the database by its ID."""
-        product = self.db.find_product(product_id)
-        return self.serializer.json_serialize_doc(product)
-
-
-    def search_products_by_name(self, search_term: str) -> List[Dict]:
-        """Search products by name."""
-        return self.db.search_products_by_name(search_term)
-
-
-    def find_all_products(self) -> List[Dict]:
-        """Find all products in the database, sorted by product name."""
-        products = self.db.find_products_paginated()
-        return self.serializer.json_serialize_docs(products)
 
 
     def replace_product(self, product_id: str) -> Dict:
@@ -110,11 +112,9 @@ class ProductService:
                 logger.info(f"Skipping URL {product.url}: {e}")
                 continue
 
-            updated_count = self.db.bulk_replace_products(operations)
-            return f"Updated {updated_count} products"
+        updated_count = self.db.bulk_replace_products(operations)
+        return f"Updated {updated_count} products" if updated_count > 0 else "Updated 0 products"
 
-        logger.info("No products updated")
-        return f"Updated 0 products"
 
 
     def delete_product(self, product_id: str) -> None:

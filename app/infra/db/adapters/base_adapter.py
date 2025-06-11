@@ -50,6 +50,10 @@ class BaseAdapter:
             ("product_id", pymongo.ASCENDING)
         ], unique=True)
 
+        self.tasks.create_index([
+            ("task_id", pymongo.ASCENDING)],
+            unique=True
+        )
 
     @staticmethod
     def validate_obj_id(id_str: str, entity_name: str = "Document") -> ObjectId:
@@ -75,8 +79,8 @@ class BaseAdapter:
         for document in cursor:
             yield self.serializer.json_serialize_doc(document)
 
-
-    def paginate_results(self, cursor, per_page, page: int = 1) -> List[Dict]:
+    @staticmethod
+    def paginate_results(cursor, per_page, page: int = 1) -> List[Dict]:
         """
         Return a paginated list of documents from a cursor.
         Args:

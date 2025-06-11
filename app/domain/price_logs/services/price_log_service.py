@@ -66,6 +66,7 @@ class PriceLogService:
         except Exception:
             raise
 
+
     def notify_subscribers(
         self, product_id: str, previous_price: float, new_price: float, price_diff: float,
         change_type: str, date_checked: str

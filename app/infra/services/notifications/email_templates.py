@@ -1,4 +1,6 @@
 from app.infra.services.notifications.email_config import EmailService
+from src.kitchnspy.app.infra.log_service import logger
+
 
 class EmailTemplateService:
     def __init__(self):
@@ -159,6 +161,9 @@ class EmailTemplateService:
         """Send a notification email to a subscriber."""
 
         change_dir = "less" if change_type == "drop" else "more"
+        formatted_diff = f"{float(price_diff):.2f}"
+        formatted_previous_price: f"{float(previous_price):.2f}"
+        formatted_new_price: f"{float(new_price):.2f}"
 
         subject = f"Price {change_type} Update for {product_name}"
 
@@ -230,7 +235,7 @@ class EmailTemplateService:
                     <p><strong>{product_name}</strong> had a little price shake-up:</p>
                     <p class="price">Before: £{previous_price:.2f}</p>
                     <p class="price">Now: £{new_price:.2f}</p>
-                    <p class="price">Change: £{price_diff:.2f} {change_dir}</p>
+                    <p class="price">Change: £{formatted_diff} {change_dir}</p>
 
                     <p><small>(as of {date_checked})</small></p>
                     <p>If this one's been sitting on your wishlist, now might be your moment.</p>

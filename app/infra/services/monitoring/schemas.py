@@ -16,7 +16,7 @@ class TaskStatus(str, Enum):
 
 class MergedTaskRecord(BaseModel):
     task_id: str
-    type: str | None
+    name: str | None
     payload: dict | None
     created_at: datetime | None
     status: TaskStatus

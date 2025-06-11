@@ -49,12 +49,15 @@ class ProductAdapter(BaseAdapter):
         return prod
 
 
-    def find_products_paginated(self, page: int = 1) -> List[dict]:
+    def find_products_paginated(self, per_page, page: int = 0) -> List[dict]:
         """Retrieve all products with pagination."""
 
         try:
             cursor = self.products.find({}).sort("product_name", pymongo.ASCENDING)
-            products = self.paginate_results(cursor, page, 10)
+            cursor2 = self.products.find({}).sort("product_name", pymongo.ASCENDING)
+
+            logger.info(f"cursor returned {list(cursor2)}")
+            products = self.paginate_results(cursor, per_page)
 
             if not products:
                 raise DocsNotFoundError(entities="Products", page = page)

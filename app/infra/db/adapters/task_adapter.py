@@ -1,5 +1,6 @@
 from app.infra.db.adapters.shared_imports import *
 from app.infra.db.adapters.base_adapter import BaseAdapter
+from uuid import UUID
 
 
 class TaskAdapter(BaseAdapter):
@@ -10,47 +11,31 @@ class TaskAdapter(BaseAdapter):
     def find_task_by_id(self, _id: str):
         return self.find_by_id(self.tasks, _id, "Task")
 
+    def find_tasks_by_status(self, status: str):
+        tasks = self.tasks.find({"status": status})
+        return tasks
+
     def find_task(self, task_id: str):
-        task = self.tasks.find({"task_id": task_id})
+        logger.debug(f"Looking up task by ID: {task_id} (type: {type(task_id)})")
+        task = self.tasks.find_one({"task_id": task_id.strip()})  # no UUID conversion
         if not task:
             raise DocNotFoundError(identifier=task_id, entity="task")
+        return task
+
 
     def find_celery_result_by_id(self, task_id: str):
-        result = self.celery_results.find({"_id": task_id})
+        result = self.celery_results.find_one({"_id": task_id})
         return result
 
+    def find_celery_tasks(self, query) -> List:
+        celery_tasks = self.celery_results.find(query)
+        return celery_tasks
 
     def filter_tasks(self, query) -> List[dict]:
-        try:
-            audit_map = {doc["task_id"]: doc for doc in self.tasks.find(query)}
-            celery_map = {doc["_id"]: doc for doc in self.celery_results.find(
-                {"_id": {"$in": list(audit_map.keys())}})}
+        return self.tasks.find(query)
 
-            merged_tasks = []
-
-            for task_id, audit in audit_map.items():
-                celery = celery_map.get(task_id, {})
-                task_data = {
-                    "task_id": task_id,
-                    "type": audit.get("type"),
-                    "payload": audit.get("payload"),
-                    "created_at": audit.get("created_at"),
-                    "status": celery.get("status", "QUEUED"),
-                    "retries": celery.get("result", {}).get("retries"),
-                    "result": celery.get("result"),
-                    "traceback": celery.get("traceback"),
-                    "runtime": celery.get("runtime"),
-                    "queue": celery.get("delivery_info", {}).get("routing_key", "default"),
-                    "worker": celery.get("worker"),
-                    "completed_at": celery.get("date_done"),
-                }
-                merged_tasks.append(task_data)
-
-            return merged_tasks
-
-        except Exception as e:
-            logger.error(f"Error merging filtered tasks: {str(e)}")
-            raise
+    def filter_celery_tasks(self, query) -> List[dict]:
+        return self.celery_results.find(query)
 
 
     def find_all_tasks(self, page: int = 1) -> List[dict]:
@@ -69,18 +54,13 @@ class TaskAdapter(BaseAdapter):
 
 
     
-    def delete_task(self, task_id: str) -> None:
+    def delete_task_audit(self, task_id: str) -> None:
         """ Delete a task document from the database by its ID."""
-        obj_id = self.validate_obj_id(task_id, "Task")
+        self.tasks.delete_one({"task_id": task_id})
 
-        try:
-            result = self.tasks.delete_one({"_id": obj_id})
-            deleted = result.deleted_count > 0
-            if deleted:
-                logger.info(f"Deleted task {task_id}")
-            else:
-                raise DocNotFoundError(identifier=task_id, entity="Task")
 
-        except Exception as e:
-            logger.error(f"Error deleting task {task_id}: {str(e)}")
-            raise
+    def delete_celery_result(self, task_id: str) -> None:
+        """ Delete a task document from the database by its ID."""
+        self.celery_results.delete_one({"_id": task_id})
+
+

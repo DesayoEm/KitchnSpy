@@ -2,7 +2,7 @@ from app.domain.price_logs.services.notification_service import tasks as price_t
 from app.domain.products.services.notification_service import tasks as product_tasks
 from app.domain.subscribers.services.notification_service import tasks as subscriber_tasks
 from app.infra.db.adapters.task_adapter import TaskAdapter
-from datetime import datetime, UTC, timezone
+from datetime import datetime,timezone
 from app.infra.log_service import logger
 
 db = TaskAdapter()
@@ -32,7 +32,8 @@ def queue_subscription_confirmation(to_email, name, product_name, unsubscribe_li
             "unsubscribe_link": unsubscribe_link
         }
     )
-    db.insert_task_audit({
+
+    task_info = {
         "task_id": task.id,
         "name": "subscription_notification",
         "notification_type": "subscription_confirmation",
@@ -44,9 +45,10 @@ def queue_subscription_confirmation(to_email, name, product_name, unsubscribe_li
         },
         "status": "QUEUED",
         "created_at": now,
-        "created_at_date": now.date()
-    })
+        "created_at_date": datetime.combine(now.date(), datetime.min.time())
+    }
 
+    db.insert_task_audit(task_info)
     logger.info("Enqueue + audit log recorded")
     return task.id
 
@@ -85,7 +87,7 @@ def queue_unsubscribed_confirmation(to_email, name, product_name, subscription_l
         },
         "status": "QUEUED",
         "created_at": now,
-        "created_at_date": now.date()
+        "created_at_date": datetime.combine(now.date(), datetime.min.time())
     })
 
     logger.info("Enqueue + audit log recorded")
@@ -141,7 +143,7 @@ def queue_price_change_notification(to_email, name, product_name, previous_price
         },
         "status": "QUEUED",
         "created_at": now,
-        "created_at_date": now.date()
+        "created_at_date": datetime.combine(now.date(), datetime.min.time())
     })
 
     logger.info("Enqueue + audit log recorded")
@@ -179,7 +181,7 @@ def queue_product_removed_notification(to_email, name, product_name):
         },
         "status": "QUEUED",
         "created_at": now,
-        "created_at_date": now.date()
+        "created_at_date": datetime.combine(now.date(), datetime.min.time())
     })
 
     logger.info("Enqueue + audit log recorded")

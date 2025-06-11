@@ -14,12 +14,14 @@ task_monitor = TaskMonitoringService()
 
 
 @router.get("/tasks/filter")
-def get_tasks(start_date, end_date, status):
+def get_tasks(start_date, end_date, status: TaskStatus):
     return task_monitor.filter_tasks_by_type_and_date(start_date, end_date, status)
+
 
 @router.get("/tasks/count")
 def count_all_tasks():
     return task_monitor.count_tasks()
+
 
 @router.get("/tasks/filtered_count")
 def count_filtered_tasks(start_date: date, end_date: date, status: TaskStatus):
@@ -37,10 +39,10 @@ def retry_task(task_id: str):
 def get_task_detail(task_id: str):
     return task_monitor.get_task_detail(task_id)
 
-@router.delete("/tasks/{task_id}", status_code=204)
+@router.delete("/tasks/purge", status_code=204)
 def purge_tasks(status: TaskStatus):
     return task_monitor.purge_old_tasks(status)
 
-@router.delete("/tasks/purge", status_code=204)
+@router.delete("/tasks/{task_id}", status_code=204)
 def delete_task(task_id: str):
-    return task_adapter.delete_task(task_id)
+    return task_monitor.delete_task(task_id)
