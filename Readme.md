@@ -16,9 +16,3 @@ It scrapes selected KitchenAid products, logs historical price changes, and noti
 
 ---
 
-## Features
-
--  **Email Alerts** – Subscribe to products and receive notifications on price drops
--  **Historical Tracking** – Logs each price change as a timestamped event
--  **Graphing** – Visualize usingStreamlit
-
